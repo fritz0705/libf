@@ -1,0 +1,5 @@
+.*.swp
+.*.swo
+*.o
+libf.so
+libf.a
