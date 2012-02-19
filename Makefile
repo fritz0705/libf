@@ -6,7 +6,10 @@ CFLAGS := -fPIC -Wall -Wextra -std=gnu99 $(CFLAGS)
 CPPFLAGS := -I ./include $(CPPFLAGS)
 LDFLAGS := $(LDFLAGS)
 
-.PHONY: all clean
+DESTDIR :=/
+PREFIX :=$(DESTDIR)usr/local
+
+.PHONY: all clean install
 
 all: libf.so libf.a
 
@@ -24,3 +27,7 @@ libf.a: $(objects)
 clean:
 	rm -f libf.so libf.a
 	find src/ -name '*.o' -delete
+
+install:
+	install libf.a libf.so $(PREFIX)/lib/
+	cp -r include/./ $(PREFIX)/include/
