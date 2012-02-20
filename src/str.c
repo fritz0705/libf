@@ -141,6 +141,16 @@ str_t str_join(str_t left, str_t right)
 	return newstr;
 }
 
+/* TODO Implement this :p */
+str_t str_sub(str_t left, int offset, unsigned int length)
+{
+	str_t newstr = str_new();
+	if (newstr == NULL)
+		return NULL;
+
+	return newstr;
+}
+
 char *str_dump(str_t str)
 {
 	char *dump = malloc(str_length(str));
