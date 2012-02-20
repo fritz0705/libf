@@ -26,9 +26,9 @@ typedef struct hash *hash_t;
 
 hash_t hash_new();
 
-void *hash_set(hash_t h, char *k, size_t ksize, void *v);
-void *hash_get(hash_t h, char *k, size_t ksize);
-void *hash_delete(hash_t h, char *k, size_t ksize);
+void *hash_set(hash_t h, void *k, size_t ksize, void *v);
+void *hash_get(hash_t h, void *k, size_t ksize);
+void *hash_delete(hash_t h, void *k, size_t ksize);
 
 void hash_clean(hash_t h);
 void hash_destroy(hash_t h);
