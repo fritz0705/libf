@@ -115,6 +115,22 @@ str_t str_create_c(char c)
 	return str;
 }
 
+str_t str_create_r(char *d, unsigned int length)
+{
+	str_t str = str_new();
+	if (str == NULL)
+		return NULL;
+	struct str_chunk *chunk = newchunk(d, length);
+	if (chunk == NULL)
+	{
+		str_destroy(str);
+		return NULL;
+	}
+
+	list_append(str->chunks, chunk);
+	return str;
+}
+
 str_t str_join(str_t left, str_t right)
 {
 	str_t newstr = str_new();
@@ -142,13 +158,61 @@ str_t str_join(str_t left, str_t right)
 	return newstr;
 }
 
-/* TODO Implement this :p */
-str_t str_sub(str_t left, int offset, unsigned int length)
+/* Build a new string with only one chunk */
+str_t str_normalize(str_t str)
 {
-	str_t newstr = str_new();
-	if (newstr == NULL)
+	char *tmp = str_dump(str);
+	if (tmp == NULL)
 		return NULL;
 
+	str_t newstr = str_new();
+	if (newstr == NULL)
+	{
+		free(tmp);
+		return NULL;
+	}
+
+	struct str_chunk *c = newchunk(tmp, str_length(str));
+	free(tmp);
+	if (c == NULL)
+	{
+		str_destroy(newstr);
+		return NULL;
+	}
+
+	list_append(newstr->chunks, c);
+
+	return newstr;
+}
+
+/* TODO Implement this in a better way */
+str_t str_sub(str_t str, int offset, unsigned int length)
+{
+	char *tmp = str_dump(str);
+	if (tmp == NULL)
+		return NULL;
+
+	str_t newstr = str_new();
+	if (newstr == NULL)
+	{
+		free(tmp);
+		return NULL;
+	}
+
+	if (offset < 0)
+		offset = str_length(str) + offset + 1;
+
+	struct str_chunk *newc = newchunk(tmp + offset, length);
+	if (newc == NULL)
+	{
+		free(tmp);
+		free(newstr);
+		return NULL;
+	}
+
+	list_append(newstr->chunks, newc);
+
+	free(tmp);
 	return newstr;
 }
 
