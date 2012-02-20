@@ -10,14 +10,18 @@ LDFLAGS := $(LDFLAGS)
 DESTDIR :=/
 PREFIX :=$(DESTDIR)usr/local
 
-.PHONY: all clean install tags
+.PHONY: all clean install tags static shared
 
-all: libf.so libf.a
+all: static shared
 
 objects := src/list.o src/hash.o src/str.o
 
 tags:
 	$(CTAGS) -R
+
+static: libf.a
+
+shared: libf.so
 
 libf.so: $(objects)
 	$(LD) -shared -o $@ $^
