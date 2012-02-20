@@ -3,9 +3,9 @@ LD := $(CC)
 AR := $(CROSS)ar
 CTAGS := $(CROSS)ctags
 
-CFLAGS := -fPIC -Wall -Wextra -std=gnu99 $(CFLAGS)
-CPPFLAGS := -I ./include $(CPPFLAGS)
-LDFLAGS := $(LDFLAGS)
+override CFLAGS := -fPIC -Wall -Wextra -std=gnu99 $(CFLAGS)
+override CPPFLAGS := -I ./include $(CPPFLAGS)
+override LDFLAGS := $(LDFLAGS)
 
 DESTDIR :=/
 PREFIX :=$(DESTDIR)usr/local
@@ -14,7 +14,7 @@ PREFIX :=$(DESTDIR)usr/local
 
 all: static shared
 
-objects := src/list.o src/hash.o src/str.o
+objects := src/list.o src/hash.o src/str.o src/str_fmt.o
 
 tags:
 	$(CTAGS) -R

@@ -18,35 +18,32 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* You will only handle pointers to string objects, therefore you should use str_t
- * instead of struct str *
- */
-typedef struct str *str_t;
+#include <f/str.h>
 
-/* Initialize empty string object */
-str_t str_new();
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
 
-/* Create string object from C string cs */
-str_t str_create_cs(char *cs);
-/* Create string object from char c */
-str_t str_create_c(char c);
-/* Create string object from raw data at position d with length */
-str_t str_create_r(char *d, unsigned int length);
+str_t str_create_fmt(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
 
-str_t str_create_i(int num, unsigned int base);
-str_t str_create_ui(unsigned int num, unsigned int base);
+	int buflen = vsnprintf(NULL, 0, fmt, ap);
+	if (buflen < 0)
+		return NULL;
 
-/* Create string object using vsnprintf(3). Please consider, that this method is
- * not a good style!
- */
-str_t str_create_fmt(const char *fmt, ...);
+	va_start(ap, fmt);
 
-/* Build new string object consisting of left and right */
-str_t str_join(str_t left, str_t right);
-str_t str_sub(str_t str, int offset, unsigned int length);
+	char *buf = malloc(buflen);
+	if (vsnprintf(buf, buflen, fmt, ap) < 0)
+	{
+		free(buf);
+		return NULL;
+	}
 
-char *str_dump(str_t str);
-str_t str_normalize(str_t str);
-unsigned int str_length(str_t str);
+	str_t str = str_create_cs(buf);
+	free(buf);
 
-void str_destroy(str_t str);
+	return str;
+}
