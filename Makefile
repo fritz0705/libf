@@ -14,7 +14,7 @@ PREFIX :=$(DESTDIR)usr/local
 
 all: static shared
 
-objects := src/list.o src/hash.o src/str.o src/str_fmt.o
+objects := src/list.o src/hash.o src/str.o src/str_fmt.o src/str_io.o
 
 tags:
 	$(CTAGS) -R
