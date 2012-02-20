@@ -49,6 +49,7 @@ char *str_dump(str_t str);
 str_t str_normalize(str_t str);
 unsigned int str_length(str_t str);
 
+str_t str_io_readline(int fd);
 str_t str_io_read(int fd, unsigned int octets);
 int str_io_write(int fd, str_t str);
 
