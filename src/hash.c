@@ -27,8 +27,6 @@
 struct hash_node
 {
 	uint32_t hash;
-	char *key;
-	size_t key_size;
 	void *value;
 };
 
@@ -72,8 +70,6 @@ void *hash_set(hash_t h, void *k, size_t ksize, void *v)
 		return NULL;
 
 	node->hash = calc_fnv1a_32(k, ksize);
-	node->key = k;
-	node->key_size = ksize;
 	node->value = v;
 
 	if (list_append(h->data, node) == NULL)
