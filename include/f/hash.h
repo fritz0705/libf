@@ -24,12 +24,12 @@
 
 typedef struct hash *hash_t;
 
-struct hash *hash_new();
+hash_t hash_new();
 
-void *hash_set(struct hash *h, char *k, size_t ksize, void *v);
-void *hash_get(struct hash *h, char *k, size_t ksize);
-void *hash_delete(struct hash *h, char *k, size_t ksize);
+void *hash_set(hash_t h, char *k, size_t ksize, void *v);
+void *hash_get(hash_t h, char *k, size_t ksize);
+void *hash_delete(hash_t h, char *k, size_t ksize);
 
-void hash_clean(struct hash *h);
-void hash_destroy(struct hash *h);
+void hash_clean(hash_t h);
+void hash_destroy(hash_t h);
 

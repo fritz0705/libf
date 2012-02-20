@@ -36,7 +36,7 @@ struct list_node
 	void *data;
 };
 
-static inline struct list_node *get_node(struct list *l, int offset)
+static inline struct list_node *get_node(list_t l, int offset)
 {
 	struct list_node *node = l->first_node;
 	for (int i = 0; node != NULL && i < offset; ++i)
@@ -45,7 +45,7 @@ static inline struct list_node *get_node(struct list *l, int offset)
 	return node;
 }
 
-static inline void recalculate_list(struct list *l)
+static inline void recalculate_list(list_t l)
 {
 	struct list_node *cur_node = l->first_node;
 	int i;
@@ -56,12 +56,12 @@ static inline void recalculate_list(struct list *l)
 	l->length = i;
 }
 
-struct list *list_new()
+list_t list_new()
 {
 	return list_init(malloc(sizeof(struct list)));
 }
 
-struct list *list_init(struct list *l)
+list_t list_init(list_t l)
 {
 	l->length = 0;
 	l->first_node = NULL;
@@ -70,12 +70,12 @@ struct list *list_init(struct list *l)
 	return l;
 }
 
-struct list *list_alloc(void * (*allocator)(int len))
+list_t list_alloc(void * (*allocator)(int len))
 {
 	return allocator(sizeof(struct list));
 }
 
-void *list_append(struct list *l, void *data)
+void *list_append(list_t l, void *data)
 {
 	struct list_node *node = malloc(sizeof(struct list_node));
 
@@ -97,7 +97,7 @@ void *list_append(struct list *l, void *data)
 	return data;
 }
 
-void *list_prepend(struct list *l, void *data)
+void *list_prepend(list_t l, void *data)
 {
 	struct list_node *node = malloc(sizeof(struct list_node));
 
@@ -119,7 +119,7 @@ void *list_prepend(struct list *l, void *data)
 	return data;
 }
 
-void *list_insert(struct list *l, void *data, int offset)
+void *list_insert(list_t l, void *data, int offset)
 {
 	struct list_node *prev_node = get_node(l, offset);
 	if (prev_node == NULL)
@@ -141,12 +141,12 @@ void *list_insert(struct list *l, void *data, int offset)
 	return data;
 }
 
-void *list_get(struct list *l, int offset)
+void *list_get(list_t l, int offset)
 {
 	return get_node(l, offset)->data;
 }
 
-int list_find(struct list *l, void *data)
+int list_find(list_t l, void *data)
 {
 	struct list_node *node = l->first_node;
 	int i;
@@ -159,7 +159,7 @@ int list_find(struct list *l, void *data)
 	return i;
 }
 
-void *list_delete(struct list *l, int offset)
+void *list_delete(list_t l, int offset)
 {
 	struct list_node *node = get_node(l, offset);
 	if (node == NULL)
@@ -181,7 +181,7 @@ void *list_delete(struct list *l, int offset)
 	return ret;
 }
 
-void list_clean(struct list *l)
+void list_clean(list_t l)
 {
 	struct list_node *node = l->first_node;
 	for (; node != NULL; node = node->next)
@@ -191,18 +191,18 @@ void list_clean(struct list *l)
 	l->last_node = NULL;
 }
 
-void list_destroy(struct list *l)
+void list_destroy(list_t l)
 {
 	list_clean(l);
 	free(l);
 }
 
-void list_rebuild(struct list *l)
+void list_rebuild(list_t l)
 {
 	recalculate_list(l);
 }
 
-int list_length(struct list *l)
+int list_length(list_t l)
 {
 	recalculate_list(l);
 	return l->length;

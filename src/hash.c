@@ -49,9 +49,9 @@ static uint32_t calc_fnv1a_32(char *k, size_t ksize)
 	return hash;
 }
 
-struct hash *hash_new()
+hash_t hash_new()
 {
-	struct hash *h = malloc(sizeof(struct hash));
+	hash_t h = malloc(sizeof(struct hash));
 	if (h == NULL)
 		return NULL;
 
@@ -65,7 +65,7 @@ struct hash *hash_new()
 	return h;
 }
 
-void *hash_set(struct hash *h, char *k, size_t ksize, void *v)
+void *hash_set(hash_t h, char *k, size_t ksize, void *v)
 {
 	struct hash_node *node = malloc(sizeof(struct hash_node));
 	if (node == NULL)
@@ -85,7 +85,7 @@ void *hash_set(struct hash *h, char *k, size_t ksize, void *v)
 	return v;
 }
 
-void *hash_get(struct hash *h, char *k, size_t ksize)
+void *hash_get(hash_t h, char *k, size_t ksize)
 {
 	int length = list_length(h->data);
 	if (length == 0)
@@ -106,7 +106,7 @@ void *hash_get(struct hash *h, char *k, size_t ksize)
 	return NULL;
 }
 
-void *hash_delete(struct hash *h, char *k, size_t ksize)
+void *hash_delete(hash_t h, char *k, size_t ksize)
 {
 	int length = list_length(h->data);
 	if (length == 0)
@@ -130,7 +130,7 @@ void *hash_delete(struct hash *h, char *k, size_t ksize)
 	return ret;
 }
 
-void hash_clean(struct hash *h)
+void hash_clean(hash_t h)
 {
 	int length = list_length(h->data);
 
@@ -142,7 +142,7 @@ void hash_clean(struct hash *h)
 	}
 }
 
-void hash_destroy(struct hash *h)
+void hash_destroy(hash_t h)
 {
 	hash_clean(h);
 	list_destroy(h->data);

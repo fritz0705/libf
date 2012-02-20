@@ -22,27 +22,27 @@
 
 typedef struct list *list_t;
 
-struct list *list_new ();
-struct list *list_init (struct list *l);
-struct list *list_alloc (void *(*allocator) (int len));
+list_t list_new ();
+list_t list_init (list_t l);
+list_t list_alloc (void *(*allocator) (int len));
 
-void *list_append (struct list *l, void *data);
-void *list_prepend (struct list *l, void *data);
-void *list_insert (struct list *l, void *data, int offset);
+void *list_append (list_t l, void *data);
+void *list_prepend (list_t l, void *data);
+void *list_insert (list_t l, void *data, int offset);
 
-void *list_get (struct list *l, int offset);
-int list_find (struct list *l, void *data);
+void *list_get (list_t l, int offset);
+int list_find (list_t l, void *data);
 
-void *list_delete (struct list *l, int offset);
+void *list_delete (list_t l, int offset);
 
 /* The difference between list_destroy and list_clean is simple:
  * list_clean will only remove the list nodes, while list_destroy
  * will also destroy the internal list structure. So you should only
  * use list_destroy if you will never use the list again.
  */
-void list_destroy (struct list *l);
-void list_clean (struct list *l);
+void list_destroy (list_t l);
+void list_clean (list_t l);
 
-int list_length (struct list *l);
-void list_rebuild (struct list *l);
+int list_length (list_t l);
+void list_rebuild (list_t l);
 
