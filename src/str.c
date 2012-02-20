@@ -43,6 +43,7 @@ static inline struct str_chunk *newchunk(char *d, int len)
 		return NULL;
 
 	chunk->length = len;
+	chunk->refs = 1;
 	chunk->data = malloc(len);
 	if (chunk->data == NULL)
 	{
