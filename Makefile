@@ -1,6 +1,7 @@
-CC := gcc
+CC := $(CROSS)gcc
 LD := $(CC)
-AR := ar
+AR := $(CROSS)ar
+CTAGS := $(CROSS)ctags
 
 CFLAGS := -fPIC -Wall -Wextra -std=gnu99 $(CFLAGS)
 CPPFLAGS := -I ./include $(CPPFLAGS)
@@ -9,11 +10,14 @@ LDFLAGS := $(LDFLAGS)
 DESTDIR :=/
 PREFIX :=$(DESTDIR)usr/local
 
-.PHONY: all clean install
+.PHONY: all clean install tags
 
 all: libf.so libf.a
 
-objects := src/list.o src/hash.o
+objects := src/list.o src/hash.o src/str.o
+
+tags:
+	$(CTAGS) -R
 
 libf.so: $(objects)
 	$(LD) -shared -o $@ $^
