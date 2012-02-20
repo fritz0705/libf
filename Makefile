@@ -32,6 +32,6 @@ clean:
 	rm -f libf.so libf.a
 	find src/ -name '*.o' -delete
 
-install:
+install: libf.so libf.a
 	install libf.a libf.so $(PREFIX)/lib/
 	cp -r include/./ $(PREFIX)/include/
