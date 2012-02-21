@@ -8,7 +8,8 @@ override CPPFLAGS := -I ./include $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
 DESTDIR :=/
-PREFIX :=$(DESTDIR)usr/local
+PREFIX :=/usr/local
+VERSION :=0.1
 
 .PHONY: all clean install tags static shared
 
@@ -37,5 +38,5 @@ clean:
 	find src/ -name '*.o' -delete
 
 install: libf.so libf.a
-	install libf.a libf.so $(PREFIX)/lib/
-	cp -r include/./ $(PREFIX)/include/
+	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/
+	cp -r include/./ $(DESTDIR)$(PREFIX)/include/
