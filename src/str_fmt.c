@@ -29,15 +29,23 @@ str_t str_create_fmt(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 
-	return str_create_vfmt(fmt, ap);
+	str_t str = str_create_vfmt(fmt, ap);
+
+	va_end(ap);
+
+	return str;
 }
 
 str_t str_create_vfmt(const char *fmt, va_list ap)
 {
-	int buflen = vsnprintf(NULL, 0, fmt, ap);
+	va_list aq;
+	va_copy(aq, ap);
+	int buflen = vsnprintf(NULL, 0, fmt, aq);
 	if (buflen < 0)
 		return NULL;
+	va_end(aq);
 
+	buflen += 1;
 	char *buf = malloc(buflen);
 	if (buf == NULL)
 		return NULL;
