@@ -257,3 +257,20 @@ free_string:
 	list_destroy(str->chunks);
 	free(str);
 }
+
+char str_get(str_t str, int offset)
+{
+	int len = str_length(str);
+
+	if (offset < 0)
+		offset = len + offset + 1;
+
+	char *cstr = str_dump(str);
+	if (cstr == NULL)
+		return 0;
+
+	char retval = cstr[offset];
+
+	free(cstr);
+	return retval;
+}

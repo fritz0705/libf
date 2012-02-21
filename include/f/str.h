@@ -45,6 +45,8 @@ str_t str_create_fmt(const char *fmt, ...);
 str_t str_join(str_t left, str_t right);
 str_t str_sub(str_t str, int offset, unsigned int length);
 
+char str_get(str_t str, int offset);
+
 char *str_dump(str_t str);
 str_t str_normalize(str_t str);
 unsigned int str_length(str_t str);
