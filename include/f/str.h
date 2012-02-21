@@ -18,6 +18,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdarg.h>
+
 /* You will only handle pointers to string objects, therefore you should use str_t
  * instead of struct str *
  */
@@ -40,6 +42,7 @@ str_t str_create_ui(unsigned int num, unsigned int base);
  * not a good style!
  */
 str_t str_create_fmt(const char *fmt, ...);
+str_t str_create_vfmt(const char *fmt, va_list ap);
 
 /* Build new string object consisting of left and right */
 str_t str_join(str_t left, str_t right);
