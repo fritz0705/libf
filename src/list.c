@@ -80,6 +80,7 @@ void *list_append(list_t l, void *data)
 
 	node->data = data;
 	node->list = l;
+	node->next = NULL;
 
 	if (l->first_node == NULL)
 	{
@@ -102,6 +103,7 @@ void *list_prepend(list_t l, void *data)
 
 	node->data = data;
 	node->list = l;
+	node->prev = NULL;
 
 	if (l->last_node == NULL)
 	{
