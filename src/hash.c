@@ -138,6 +138,11 @@ void hash_clean(hash_t h)
 	}
 }
 
+unsigned int hash_size(hash_t h)
+{
+	return list_length(h->data);
+}
+
 void hash_destroy(hash_t h)
 {
 	hash_clean(h);
