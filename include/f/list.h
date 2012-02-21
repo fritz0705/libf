@@ -23,8 +23,6 @@
 typedef struct list *list_t;
 
 list_t list_new ();
-list_t list_init (list_t l);
-list_t list_alloc (void *(*allocator) (int len));
 
 void *list_append (list_t l, void *data);
 void *list_prepend (list_t l, void *data);

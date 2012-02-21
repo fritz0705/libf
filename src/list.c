@@ -56,12 +56,7 @@ static inline void recalculate_list(list_t l)
 	l->length = i;
 }
 
-list_t list_new()
-{
-	return list_init(malloc(sizeof(struct list)));
-}
-
-list_t list_init(list_t l)
+static list_t list_init(list_t l)
 {
 	l->length = 0;
 	l->first_node = NULL;
@@ -70,9 +65,13 @@ list_t list_init(list_t l)
 	return l;
 }
 
-list_t list_alloc(void * (*allocator)(int len))
+list_t list_new()
 {
-	return allocator(sizeof(struct list));
+	list_t list = malloc(sizeof(struct list));
+	if (list == NULL)
+		return NULL;
+
+	return list_init(list);
 }
 
 void *list_append(list_t l, void *data)
