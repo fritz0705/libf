@@ -25,7 +25,7 @@ static: libf.a
 shared: libf.so
 
 libf.so: $(objects)
-	$(LD) -shared -o $@ $^
+	$(LD) $(LDFLAGS) -shared -o $@ $^
 
 libf.a: $(objects)
 	$(AR) rs $@ $^
