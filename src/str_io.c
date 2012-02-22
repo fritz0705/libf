@@ -23,6 +23,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <sys/uio.h>
+
+static char *newline = "\r\n";
+
 str_t str_io_readline(int fd)
 {
 	str_t str = str_new();
@@ -97,6 +101,24 @@ int str_io_write(int fd, str_t str)
 		return -1;
 
 	int retval = write(fd, tmp, str_length(str));
+	free(tmp);
+
+	return retval;
+}
+
+int str_io_writeline(int fd, str_t str)
+{
+	char *tmp = str_dump(str);
+	if (tmp == NULL)
+		return -1;
+
+	struct iovec vector[2];
+	vector[0].iov_base = tmp;
+	vector[0].iov_len = str_length(str);
+	vector[1].iov_base = newline;
+	vector[1].iov_len = 2;
+
+	int retval = writev(fd, vector, 2);
 	free(tmp);
 
 	return retval;

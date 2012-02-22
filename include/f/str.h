@@ -57,5 +57,6 @@ unsigned int str_length(str_t str);
 str_t str_io_readline(int fd);
 str_t str_io_read(int fd, unsigned int octets);
 int str_io_write(int fd, str_t str);
+int str_io_writeline(int fd, str_t str);
 
 void str_destroy(str_t str);
