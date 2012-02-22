@@ -222,9 +222,10 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 
 char *str_dump(str_t str)
 {
-	char *dump = malloc(str_length(str));
+	char *dump = malloc(str_length(str)) + 1;
 	if (dump == NULL)
 		return NULL;
+	dump[str_length(str)] = 0;
 
 	char *offset = dump;
 	int chunks = list_length(str->chunks);
