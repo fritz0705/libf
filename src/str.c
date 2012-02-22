@@ -257,6 +257,8 @@ void str_clean(str_t str)
 
 	for (int i = 0; i < chunks; ++i)
 		freechunk(list_get(str->chunks, i));
+
+	list_clean(str->chunks);
 }
 
 void str_destroy(str_t str)
