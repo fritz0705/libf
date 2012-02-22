@@ -75,6 +75,7 @@ str_t str_new()
 		return NULL;
 
 	str->chunks = list_new();
+	str->frozen = 0;
 
 	return str;
 }
@@ -274,6 +275,9 @@ char str_get(str_t str, int offset)
 
 str_t str_append_r(str_t str, char *d, unsigned int length)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	struct str_chunk *chunk = newchunk(d, length);
 	if (chunk == NULL)
 		return NULL;
@@ -284,6 +288,9 @@ str_t str_append_r(str_t str, char *d, unsigned int length)
 
 str_t str_append_c(str_t str, char c)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	struct str_chunk *chunk = newchunk(&c, 1);
 	if (chunk == NULL)
 		return NULL;
@@ -294,6 +301,9 @@ str_t str_append_c(str_t str, char c)
 
 str_t str_append_cs(str_t str, char *cs)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	struct str_chunk *chunk = newchunk(cs, strlen(cs));
 	if (chunk == NULL)
 		return NULL;
@@ -304,6 +314,9 @@ str_t str_append_cs(str_t str, char *cs)
 
 str_t str_append(str_t str, str_t right)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	unsigned int chunks = list_length(right->chunks);
 	for (unsigned int i = 0; i < chunks; ++i)
 	{
@@ -313,4 +326,15 @@ str_t str_append(str_t str, str_t right)
 	}
 
 	return str;
+}
+
+int str_freeze(str_t str)
+{
+	str->frozen = 1;
+	return 1;
+}
+
+int str_frozen(str_t str)
+{
+	return str->frozen;
 }

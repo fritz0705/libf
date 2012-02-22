@@ -26,6 +26,9 @@
 
 str_t str_append_fmt(str_t str, const char *fmt, ...)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	va_list ap;
 	va_start(ap, fmt);
 
@@ -38,6 +41,9 @@ str_t str_append_fmt(str_t str, const char *fmt, ...)
 
 str_t str_append_vfmt(str_t str, const char *fmt, va_list ap)
 {
+	if (str_frozen(str))
+		return NULL;
+
 	va_list aq;
 	va_copy(aq, ap);
 	int buflen = vsnprintf(NULL, 0, fmt, aq);

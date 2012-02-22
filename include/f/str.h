@@ -70,5 +70,8 @@ str_t str_io_read(int fd, unsigned int octets);
 int str_io_write(int fd, str_t str);
 int str_io_writeline(int fd, str_t str);
 
+int str_freeze(str_t str);
+int str_frozen(str_t str);
+
 void str_clean(str_t str);
 void str_destroy(str_t str);
