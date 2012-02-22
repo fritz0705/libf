@@ -21,20 +21,10 @@
 #include <f/str.h>
 #include <f/list.h>
 
+#include "str.h"
+
 #include <stdlib.h>
 #include <string.h>
-
-struct str_chunk
-{
-	unsigned int refs;
-	unsigned int length;
-	char *data;
-};
-
-struct str
-{
-	list_t chunks;
-};
 
 static inline struct str_chunk *newchunk(char *d, int len)
 {
