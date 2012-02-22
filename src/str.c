@@ -70,6 +70,14 @@ static inline void freechunk(struct str_chunk *c)
 	}
 }
 
+static unsigned int getabsoffset(str_t str, int offset)
+{
+	if (offset < 0)
+		return str_length(str) + offset;
+
+	return offset;
+}
+
 str_t str_new()
 {
 	str_t str = malloc(sizeof(struct str));
@@ -199,10 +207,9 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 		return NULL;
 	}
 
-	if (offset < 0)
-		offset = str_length(str) + offset + 1;
+	unsigned int absoffset = getabsoffset(str, offset);
 
-	struct str_chunk *newc = newchunk(tmp + offset, length);
+	struct str_chunk *newc = newchunk(tmp + absoffset, length);
 	if (newc == NULL)
 	{
 		free(tmp);
@@ -260,16 +267,13 @@ free_string:
 
 char str_get(str_t str, int offset)
 {
-	int len = str_length(str);
-
-	if (offset < 0)
-		offset = len + offset + 1;
+	unsigned int absoffset = getabsoffset(str, offset);
 
 	char *cstr = str_dump(str);
 	if (cstr == NULL)
 		return 0;
 
-	char retval = cstr[offset];
+	char retval = cstr[absoffset];
 
 	free(cstr);
 	return retval;
