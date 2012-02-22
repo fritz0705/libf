@@ -52,7 +52,7 @@ int sock_connect_ipv6(char *addr, int port)
 	if (inet_pton(AF_INET6, addr, &saddr.sin6_addr) != 1)
 		return -1;
 
-	if (connect(sock, (const struct socaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
+	if (connect(sock, (const struct sockaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
 	{
 		close(sock);
 		return -1;
