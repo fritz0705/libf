@@ -24,19 +24,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-str_t str_create_fmt(const char *fmt, ...)
+str_t str_append_fmt(str_t str, const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
 
-	str_t str = str_create_vfmt(fmt, ap);
+	str_t retstr = str_append_vfmt(str, fmt, ap);
 
 	va_end(ap);
 
-	return str;
+	return retstr;
 }
 
-str_t str_create_vfmt(const char *fmt, va_list ap)
+str_t str_append_vfmt(str_t str, const char *fmt, va_list ap)
 {
 	va_list aq;
 	va_copy(aq, ap);
@@ -55,8 +55,38 @@ str_t str_create_vfmt(const char *fmt, va_list ap)
 		return NULL;
 	}
 
-	str_t str = str_create_r(buf, buflen);
+	str_t retstr = str_append_r(str, buf, buflen);
 	free(buf);
+
+	return retstr;
+}
+
+str_t str_create_fmt(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+
+	str_t str = str_new();
+	if (str_append_vfmt(str, fmt, ap) == NULL)
+	{
+		str_destroy(str);
+		str = NULL;
+	}
+
+	va_end(ap);
+
+	return str;
+}
+
+str_t str_create_vfmt(const char *fmt, va_list ap)
+{
+	str_t str = str_new();
+
+	if (str_append_vfmt(str, fmt, ap) == NULL)
+	{
+		str_destroy(str);
+		str = NULL;
+	}
 
 	return str;
 }

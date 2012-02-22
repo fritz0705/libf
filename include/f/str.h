@@ -56,6 +56,9 @@ str_t str_append_cs(str_t str, char *cs);
 str_t str_append_c(str_t str, char c);
 str_t str_append_r(str_t str, char *d, unsigned int length);
 
+str_t str_append_fmt(str_t str, const char *fmt, ...);
+str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
+
 char str_get(str_t str, int offset);
 
 char *str_dump(str_t str);
