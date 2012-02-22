@@ -95,14 +95,13 @@ str_t str_create_cs(char *cs)
 	str_t str = str_new();
 	if (str == NULL)
 		return NULL;
-	struct str_chunk *chunk = newchunk(cs, strlen(cs));
-	if (chunk == NULL)
+
+	if (str_append_cs(str, cs) == NULL)
 	{
 		str_destroy(str);
 		return NULL;
 	}
 
-	list_append(str->chunks, chunk);
 	return str;
 }
 
@@ -112,14 +111,13 @@ str_t str_create_c(char c)
 	str_t str = str_new();
 	if (str == NULL)
 		return NULL;
-	struct str_chunk *chunk = newchunk(&c, 1);
-	if (chunk == NULL)
+
+	if (str_append_c(str, c) == NULL)
 	{
 		str_destroy(str);
 		return NULL;
 	}
 
-	list_append(str->chunks, chunk);
 	return str;
 }
 
@@ -128,14 +126,13 @@ str_t str_create_r(char *d, unsigned int length)
 	str_t str = str_new();
 	if (str == NULL)
 		return NULL;
-	struct str_chunk *chunk = newchunk(d, length);
-	if (chunk == NULL)
+
+	if (str_append_r(str, d, length) == NULL)
 	{
 		str_destroy(str);
 		return NULL;
 	}
-
-	list_append(str->chunks, chunk);
+	
 	return str;
 }
 
@@ -251,16 +248,19 @@ unsigned int str_length(str_t str)
 	return length;
 }
 
-void str_destroy(str_t str)
+void str_clean(str_t str)
 {
 	int chunks = list_length(str->chunks);
 	if (chunks == 0)
-		goto free_string;
+		return;
 
 	for (int i = 0; i < chunks; ++i)
 		freechunk(list_get(str->chunks, i));
+}
 
-free_string:
+void str_destroy(str_t str)
+{
+	str_clean(str);
 	list_destroy(str->chunks);
 	free(str);
 }
@@ -277,4 +277,47 @@ char str_get(str_t str, int offset)
 
 	free(cstr);
 	return retval;
+}
+
+str_t str_append_r(str_t str, char *d, unsigned int length)
+{
+	struct str_chunk *chunk = newchunk(d, length);
+	if (chunk == NULL)
+		return NULL;
+
+	list_append(str->chunks, chunk);
+	return str;
+}
+
+str_t str_append_c(str_t str, char c)
+{
+	struct str_chunk *chunk = newchunk(&c, 1);
+	if (chunk == NULL)
+		return NULL;
+
+	list_append(str->chunks, chunk);
+	return str;
+}
+
+str_t str_append_cs(str_t str, char *cs)
+{
+	struct str_chunk *chunk = newchunk(cs, strlen(cs));
+	if (chunk == NULL)
+		return NULL;
+
+	list_append(str->chunks, chunk);
+	return str;
+}
+
+str_t str_append(str_t str, str_t right)
+{
+	unsigned int chunks = list_length(right->chunks);
+	for (unsigned int i = 0; i < chunks; ++i)
+	{
+		struct str_chunk *c = list_get(right->chunks, i);
+		usechunk(c);
+		list_append(str->chunks, c);
+	}
+
+	return str;
 }

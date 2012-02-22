@@ -18,6 +18,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#pragma once
+
 #include <stdarg.h>
 
 /* You will only handle pointers to string objects, therefore you should use str_t
@@ -28,6 +30,7 @@ typedef struct str *str_t;
 /* Initialize empty string object */
 str_t str_new();
 
+str_t str_create(str_t oldstr);
 /* Create string object from C string cs */
 str_t str_create_cs(char *cs);
 /* Create string object from char c */
@@ -48,6 +51,11 @@ str_t str_create_vfmt(const char *fmt, va_list ap);
 str_t str_join(str_t left, str_t right);
 str_t str_sub(str_t str, int offset, unsigned int length);
 
+str_t str_append(str_t str, str_t right);
+str_t str_append_cs(str_t str, char *cs);
+str_t str_append_c(str_t str, char c);
+str_t str_append_r(str_t str, char *d, unsigned int length);
+
 char str_get(str_t str, int offset);
 
 char *str_dump(str_t str);
@@ -59,4 +67,5 @@ str_t str_io_read(int fd, unsigned int octets);
 int str_io_write(int fd, str_t str);
 int str_io_writeline(int fd, str_t str);
 
+void str_clean(str_t str);
 void str_destroy(str_t str);
