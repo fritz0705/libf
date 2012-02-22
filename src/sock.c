@@ -38,6 +38,29 @@ int sock_listen(char *addr)
 	return sock_listen_unix(addr);
 }
 
+int sock_connect_ipv6(char *addr, int port)
+{
+	int sock = socket(AF_INET6, SOCK_STREAM, 0);
+	if (sock == -1)
+		return -1;
+
+	struct sockaddr_in6 saddr = {
+		.sin6_family = AF_INET6
+	};
+	saddr.sin6_port = htons(port);
+
+	if (inet_pton(AF_INET6, addr, &saddr.sin6_addr) != 1)
+		return -1;
+
+	if (connect(sock, (const struct socaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
 int sock_connect_unix(char *addr)
 {
 	int sock = socket(AF_UNIX, SOCK_STREAM, 0);
