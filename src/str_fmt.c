@@ -61,7 +61,7 @@ str_t str_append_vfmt(str_t str, const char *fmt, va_list ap)
 		return NULL;
 	}
 
-	str_t retstr = str_append_r(str, buf, buflen);
+	str_t retstr = str_append_r(str, buf, buflen - 1);
 	free(buf);
 
 	return retstr;
