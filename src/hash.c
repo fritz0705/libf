@@ -78,7 +78,7 @@ void *hash_get(hash_t h, void *k, unsigned int ksize)
 	if (length == 0)
 		return NULL;
 
-	fnv32_t hash = fnv_calc(h->bits, k, ksize);
+	fnv_t hash = fnv_calc(h->bits, k, ksize);
 
 	for (int i = 0; i < length; ++i)
 	{
@@ -99,7 +99,7 @@ void *hash_delete(hash_t h, void *k, unsigned int ksize)
 	if (length == 0)
 		return NULL;
 
-	fnv32_t hash = fnv_calc(h->bits, k, ksize);
+	fnv_t hash = fnv_calc(h->bits, k, ksize);
 	void *ret = NULL;
 
 	for (int i = 0; i < length; ++i)
