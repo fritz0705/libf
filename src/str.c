@@ -360,3 +360,89 @@ int str_frozen(str_t str)
 {
 	return str->frozen;
 }
+
+static inline char _to_digit(char n)
+{
+	return (n < 10 ? '0' : 'a' - 10) + n;
+}
+
+str_t str_append_i(str_t str, int num, unsigned int base)
+{
+	if (str_frozen(str))
+		return NULL;
+
+	_Bool negative = 0;
+	if (num < 0)
+	{
+		negative = 1;
+		num = -num;
+	}
+	char buffer[__SIZEOF_INT__ * 8 + 1];
+	char *res = buffer + __SIZEOF_INT__ * 8;
+
+	*res = 0;
+	--res;
+
+	while ((num > 0) && res >= buffer)
+	{
+		*res = _to_digit(num % base);
+		--res;
+		num /= base;
+	}
+
+	if (negative)
+		str_append_c(str, '-');
+
+	return str_append_cs(str, res);
+}
+
+str_t str_append_ui(str_t str, unsigned int num, unsigned int base)
+{
+	if (str_frozen(str))
+		return NULL;
+
+	char buffer[__SIZEOF_INT__ * 8 + 1];
+	char *res = buffer + __SIZEOF_INT__ * 8;
+
+	*res = 0;
+	--res;
+
+	while ((num > 0) && res >= buffer)
+	{
+		*res = _to_digit(num % base);
+		--res;
+		num /= base;
+	}
+
+	return str_append_cs(str, res);
+}
+
+str_t str_create_i(int num, unsigned int base)
+{
+	str_t str = str_new();
+	if (str == NULL)
+		return NULL;
+
+	if (str_append_i(str, num, base) == NULL)
+	{
+		str_destroy(str);
+		return NULL;
+	}
+
+	return str;
+}
+
+str_t str_create_ui(unsigned int num, unsigned int base)
+{
+	str_t str = str_new();
+	if (str == NULL)
+		return NULL;
+
+	if (str_append_ui(str, num, base) == NULL)
+	{
+		str_destroy(str);
+		return NULL;
+	}
+
+	return str;
+}
