@@ -18,13 +18,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdint.h>
-#include <f/str.h>
+#include <f/fnv.h>
 
-typedef uint64_t fnv_t;
+#include <stdlib.h>
 
-fnv_t fnv_calc(unsigned int bits, void *k, unsigned int size);
-fnv_t fnv_calc_1a(unsigned int bits, void *k, unsigned int size);
+fnv_t fnv_str_calc(unsigned int bits, str_t str)
+{
+	char *dump = str_dump(str);
+	if (dump == NULL)
+		return 0;
 
-fnv_t fnv_str_calc(unsigned int bits, str_t str);
-fnv_t fnv_str_calc_1a(unsigned int bits, str_t str);
+	fnv_t result = fnv_calc(bits, dump, str_length(str));
+
+	free(dump);
+	return result;
+}
+
+fnv_t fnv_str_calc_1a(unsigned int bits, str_t str)
+{
+	char *dump = str_dump(str);
+	if (dump == NULL)
+		return 0;
+
+	fnv_t result = fnv_calc_1a(bits, dump, str_length(str));
+
+	free(dump);
+	return result;
+}
