@@ -54,7 +54,7 @@ hash_t hash_new()
 	return h;
 }
 
-void *hash_set(hash_t h, void *k, size_t ksize, void *v)
+void *hash_set(hash_t h, void *k, unsigned int ksize, void *v)
 {
 	struct hash_node *node = malloc(sizeof(struct hash_node));
 	if (node == NULL)
@@ -72,13 +72,13 @@ void *hash_set(hash_t h, void *k, size_t ksize, void *v)
 	return v;
 }
 
-void *hash_get(hash_t h, void *k, size_t ksize)
+void *hash_get(hash_t h, void *k, unsigned int ksize)
 {
 	int length = list_length(h->data);
 	if (length == 0)
 		return NULL;
 
-	uint32_t hash = fnv_calc(h->bits, k, ksize);
+	fnv32_t hash = fnv_calc(h->bits, k, ksize);
 
 	for (int i = 0; i < length; ++i)
 	{
@@ -93,13 +93,13 @@ void *hash_get(hash_t h, void *k, size_t ksize)
 	return NULL;
 }
 
-void *hash_delete(hash_t h, void *k, size_t ksize)
+void *hash_delete(hash_t h, void *k, unsigned int ksize)
 {
 	int length = list_length(h->data);
 	if (length == 0)
 		return NULL;
 
-	uint32_t hash = fnv_calc(h->bits, k, ksize);
+	fnv32_t hash = fnv_calc(h->bits, k, ksize);
 	void *ret = NULL;
 
 	for (int i = 0; i < length; ++i)

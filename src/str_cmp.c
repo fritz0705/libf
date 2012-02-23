@@ -25,11 +25,11 @@
 #include <stdlib.h>
 
 /* Here we will compare the two strings `left` and `right` */
-bool str_cmp(str_t left, str_t right)
+_Bool str_cmp(str_t left, str_t right)
 {
 	/* If the two strings have different lengths then they are not equal */
 	if (str_length(left) != str_length(right))
-		return false;
+		return 0;
 
 	/* Dump the two strings */
 	char *left_dump = str_dump(left);
@@ -43,7 +43,7 @@ bool str_cmp(str_t left, str_t right)
 	free(right_dump);
 	
 	if (result == 0)
-		return true;
+		return 1;
 
-	return false;
+	return 0;
 }

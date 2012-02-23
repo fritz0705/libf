@@ -21,7 +21,6 @@
 #pragma once
 
 #include <stdarg.h>
-#include <stdbool.h>
 
 /* You will only handle pointers to string objects, therefore you should use str_t
  * instead of struct str *
@@ -66,7 +65,7 @@ char *str_dump(str_t str);
 str_t str_normalize(str_t str);
 unsigned int str_length(str_t str);
 
-bool str_cmp(str_t left, str_t right);
+_Bool str_cmp(str_t left, str_t right);
 
 str_t str_io_readline(int fd);
 str_t str_io_read(int fd, unsigned int octets);
