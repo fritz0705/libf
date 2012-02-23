@@ -393,7 +393,7 @@ str_t str_append_i(str_t str, int num, unsigned int base)
 	if (negative)
 		str_append_c(str, '-');
 
-	return str_append_cs(str, res);
+	return str_append_cs(str, res + 1);
 }
 
 str_t str_append_ui(str_t str, unsigned int num, unsigned int base)
@@ -414,7 +414,7 @@ str_t str_append_ui(str_t str, unsigned int num, unsigned int base)
 		num /= base;
 	}
 
-	return str_append_cs(str, res);
+	return str_append_cs(str, res + 1);
 }
 
 str_t str_create_i(int num, unsigned int base)
@@ -425,7 +425,7 @@ str_t str_create_i(int num, unsigned int base)
 
 	if (str_append_i(str, num, base) == NULL)
 	{
-		str_destroy(str);
+		free(str);
 		return NULL;
 	}
 
