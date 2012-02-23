@@ -111,7 +111,7 @@ void *hash_delete(hash_t h, void *k, unsigned int ksize)
 			ret = node->value;
 			free(node);
 			list_delete(h->data, i);
-			break;
+			return ret;
 		}
 	}
 
