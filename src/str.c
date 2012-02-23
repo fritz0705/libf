@@ -80,6 +80,21 @@ str_t str_new()
 	return str;
 }
 
+str_t str_create(str_t oldstr)
+{
+	str_t str = str_new();
+	if (str == NULL)
+		return NULL;
+
+	if (str_append(str, oldstr) == NULL)
+	{
+		str_destroy(str);
+		return NULL;
+	}
+
+	return str;
+}
+
 /* Create from C String */
 str_t str_create_cs(char *cs)
 {
@@ -181,7 +196,6 @@ str_t str_normalize(str_t str)
 	return newstr;
 }
 
-/* TODO Implement this in a better way */
 str_t str_sub(str_t str, int offset, unsigned int length)
 {
 	char *tmp = str_dump(str);
