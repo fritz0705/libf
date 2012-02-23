@@ -240,15 +240,14 @@ unsigned int str_length(str_t str)
 	return length;
 }
 
+static void _clean_iterator(unsigned int i, void *str_v, void *data)
+{
+	freechunk((struct str_chunk *)str_v);
+}
+
 void str_clean(str_t str)
 {
-	int chunks = list_length(str->chunks);
-	if (chunks == 0)
-		return;
-
-	for (int i = 0; i < chunks; ++i)
-		freechunk(list_get(str->chunks, i));
-
+	list_iterate(str->chunks, _clean_iterator, NULL);
 	list_clean(str->chunks);
 }
 
