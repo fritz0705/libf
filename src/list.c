@@ -23,7 +23,6 @@
 
 struct list
 {
-	int length;
 	struct list_node *first_node;
 	struct list_node *last_node;
 };
@@ -53,12 +52,10 @@ static inline void recalculate_list(list_t l)
 		cur_node = cur_node->next;
 
 	l->last_node = cur_node;
-	l->length = i;
 }
 
 static list_t list_init(list_t l)
 {
-	l->length = 0;
 	l->first_node = NULL;
 	l->last_node = NULL;
 
@@ -122,23 +119,24 @@ void *list_prepend(list_t l, void *data)
 
 void *list_insert(list_t l, void *data, int offset)
 {
-	struct list_node *prev_node = get_node(l, offset);
-	if (prev_node == NULL)
+	struct list_node *next_node = get_node(l, offset);
+	if (next_node == NULL)
 		return NULL;
+
+	struct list_node *prev_node = next_node->prev;
 
 	struct list_node *node = malloc(sizeof(struct list_node));
 
 	node->data = data;
 	node->list = l;
+
+	node->next = next_node;
 	node->prev = prev_node;
-	node->next = prev_node->next;
 
-	if (prev_node->next != NULL)
-		prev_node->next->prev = node;
-	prev_node->next = node;
+	next_node->prev = node;
+	if (prev_node == NULL)
+		l->first_node = node;
 
-	recalculate_list(l);
-	
 	return data;
 }
 
@@ -205,7 +203,20 @@ void list_rebuild(list_t l)
 
 int list_length(list_t l)
 {
-	recalculate_list(l);
-	return l->length;
+	struct list_node *node = l->first_node;
+	unsigned int length = 0;
+	while (node != NULL)
+	{
+		++length;
+		node = node->next;
+	}
+
+	return length;
 }
 
+void list_iterate(list_t l, list_iterator_t iter, void *data)
+{
+	struct list_node *node = l->first_node;
+	for (unsigned int i = 0; node != NULL; node = node->next, ++i)
+		iter(i, node->data, data);
+}

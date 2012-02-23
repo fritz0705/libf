@@ -21,6 +21,7 @@
 #pragma once
 
 typedef struct list *list_t;
+typedef void (*list_iterator_t)(unsigned int, void *, void *);
 
 list_t list_new ();
 
@@ -44,3 +45,4 @@ void list_clean (list_t l);
 int list_length (list_t l);
 void list_rebuild (list_t l);
 
+void list_iterate(list_t l, list_iterator_t iter, void *data);
