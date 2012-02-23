@@ -20,32 +20,22 @@
 
 #include <f/hash.h>
 #include <f/list.h>
+#include <f/fnv.h>
 
 #include <stdint.h>
 #include <stdlib.h>
 
 struct hash_node
 {
-	uint32_t hash;
+	fnv_t hash;
 	void *value;
 };
 
 struct hash
 {
 	struct list *data;
+	unsigned int bits;
 };
-
-static uint32_t calc_fnv1a_32(char *k, size_t ksize)
-{
-	uint32_t hash = 2166136261U;
-	for (size_t i = 0; i < ksize; ++i)
-	{
-		hash = hash ^ k[i];
-		hash = hash * 16777619U;
-	}
-
-	return hash;
-}
 
 hash_t hash_new()
 {
@@ -59,6 +49,7 @@ hash_t hash_new()
 		free(h);
 		return NULL;
 	}
+	h->bits = 64;
 
 	return h;
 }
@@ -69,7 +60,7 @@ void *hash_set(hash_t h, void *k, size_t ksize, void *v)
 	if (node == NULL)
 		return NULL;
 
-	node->hash = calc_fnv1a_32(k, ksize);
+	node->hash = fnv_calc(h->bits, k, ksize);
 	node->value = v;
 
 	if (list_append(h->data, node) == NULL)
@@ -87,7 +78,7 @@ void *hash_get(hash_t h, void *k, size_t ksize)
 	if (length == 0)
 		return NULL;
 
-	uint32_t hash = calc_fnv1a_32(k, ksize);
+	uint32_t hash = fnv_calc(h->bits, k, ksize);
 
 	for (int i = 0; i < length; ++i)
 	{
@@ -108,7 +99,7 @@ void *hash_delete(hash_t h, void *k, size_t ksize)
 	if (length == 0)
 		return NULL;
 
-	uint32_t hash = calc_fnv1a_32(k, ksize);
+	uint32_t hash = fnv_calc(h->bits, k, ksize);
 	void *ret = NULL;
 
 	for (int i = 0; i < length; ++i)
