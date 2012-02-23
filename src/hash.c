@@ -109,6 +109,7 @@ void *hash_delete(hash_t h, void *k, unsigned int ksize)
 		if (node->hash == hash)
 		{
 			ret = node->value;
+			free(node);
 			list_delete(h->data, i);
 			break;
 		}
