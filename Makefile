@@ -3,7 +3,7 @@ LD := $(CC)
 AR := $(CROSS)ar
 CTAGS := $(CROSS)ctags
 
-override CFLAGS := -fPIC -Wall -Wextra -std=gnu99 $(CFLAGS)
+override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 $(CFLAGS)
 override CPPFLAGS := -I ./include $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
