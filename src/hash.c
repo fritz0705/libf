@@ -33,7 +33,7 @@ struct hash_node
 
 struct hash
 {
-	struct list *data;
+	list_t data;
 	unsigned int bits;
 };
 
@@ -117,16 +117,15 @@ void *hash_delete(hash_t h, void *k, unsigned int ksize)
 	return ret;
 }
 
+void _clean_iterator(unsigned int i, void *hnode_r, void *unused)
+{
+	free(hnode_r);
+}
+
 void hash_clean(hash_t h)
 {
-	int length = list_length(h->data);
-
-	for (int i = 0; i < length; ++i)
-	{
-		struct hash_node *node = (struct hash_node *)list_get(h->data, i);
-		free(node);
-		list_delete(h->data, i);
-	}
+	list_iterate(h->data, _clean_iterator, NULL);
+	list_clean(h->data);
 }
 
 unsigned int hash_size(hash_t h)
@@ -138,5 +137,6 @@ void hash_destroy(hash_t h)
 {
 	hash_clean(h);
 	list_destroy(h->data);
+	free(h);
 }
 
