@@ -26,6 +26,8 @@
 #include <sys/un.h>
 #include <unistd.h>
 
+#include <string.h>
+
 #include <arpa/inet.h>
 
 int sock_connect(char *addr)

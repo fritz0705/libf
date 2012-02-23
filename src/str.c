@@ -213,7 +213,7 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 
 char *str_dump(str_t str)
 {
-	char *dump = malloc(str_length(str)) + 1;
+	char *dump = (char *)malloc(str_length(str)) + 1;
 	if (dump == NULL)
 		return NULL;
 	dump[str_length(str)] = 0;
