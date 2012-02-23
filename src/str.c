@@ -211,31 +211,40 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 	return newstr;
 }
 
+static void _dump_iterator(unsigned int i, void *str_v, void *data)
+{
+	struct str_chunk *c = str_v;
+	char **offset = data;
+	memcpy(*offset, c->data, c->length);
+	*offset += c->length;
+}
+
 char *str_dump(str_t str)
 {
-	char *dump = (char *)malloc(str_length(str)) + 1;
+	unsigned int length = str_length(str);
+	char *dump = (char *)malloc(length + 1);
 	if (dump == NULL)
 		return NULL;
-	dump[str_length(str)] = 0;
+	dump[length] = 0;
 
 	char *offset = dump;
-	int chunks = list_length(str->chunks);
-	for (int i = 0; i < chunks; ++i)
-	{
-		struct str_chunk *c = list_get(str->chunks, i);
-		memcpy(offset, c->data, c->length);
-		offset += c->length;
-	}
+	list_iterate(str->chunks, _dump_iterator, &offset);
 
 	return dump;
 }
 
+static void _length_iterator(unsigned int i, void *str_v, void *data)
+{
+	unsigned int *length = data;
+	struct str_chunk *chunk = str_v;
+
+	*length += chunk->length;
+}
+
 unsigned int str_length(str_t str)
 {
-	int chunks = list_length(str->chunks);
 	unsigned int length = 0;
-	for (int i = 0; i < chunks; ++i)
-		length += ((struct str_chunk *)list_get(str->chunks, i))->length;
+	list_iterate(str->chunks, _length_iterator, &length);
 
 	return length;
 }
