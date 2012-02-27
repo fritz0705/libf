@@ -63,6 +63,7 @@ str_t str_append_fmt(str_t str, const char *fmt, ...);
 str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
 
 char str_get(str_t str, int offset);
+int str_offset(str_t str, char c);
 
 char *str_dump(str_t str);
 str_t str_normalize(str_t str);

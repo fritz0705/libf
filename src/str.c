@@ -463,3 +463,23 @@ str_t str_create_ui(unsigned int num, unsigned int base)
 
 	return str;
 }
+
+int str_offset(str_t str, char c)
+{
+	char *dump = str_dump(str);
+	if (dump == NULL)
+		return -1;
+
+	unsigned int len = str_length(str);
+	for (unsigned int i = 0; i < len; ++i)
+	{
+		if (dump[i] == c)
+		{
+			free(dump);
+			return i;
+		}
+	}
+
+	free(dump);
+	return -1;
+}
