@@ -20,7 +20,6 @@
 
 #include <f/hash.h>
 #include <f/list.h>
-#include <f/fnv.h>
 
 #include <stdint.h>
 #include <stdlib.h>
