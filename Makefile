@@ -15,7 +15,7 @@ VERSION :=0.1
 
 all: static shared
 
-objects := src/list.o src/hash.o src/str.o src/str_fmt.o src/str_io.o src/sock.o src/fnv.o src/str_cmp.o src/fnv_str.o
+objects := src/list.o src/hash.o src/str.o src/str_fmt.o src/str_io.o src/sock.o src/fnv.o src/str_cmp.o src/fnv_str.o src/list_iterate.o
 
 tags:
 	$(CTAGS) -R

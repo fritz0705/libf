@@ -54,14 +54,14 @@ hash_t hash_new()
 	return h;
 }
 
-void *hash_set(hash_t h, void *k, unsigned int ksize, void *v)
+void *hash_set_r(hash_t h, fnv_t fnv, void *val)
 {
 	struct hash_node *node = malloc(sizeof(struct hash_node));
 	if (node == NULL)
 		return NULL;
 
-	node->hash = fnv_calc(h->bits, k, ksize);
-	node->value = v;
+	node->hash = fnv;
+	node->value = val;
 
 	if (list_append(h->data, node) == NULL)
 	{
@@ -69,63 +69,86 @@ void *hash_set(hash_t h, void *k, unsigned int ksize, void *v)
 		return NULL;
 	}
 
-	return v;
+	return val;
+}
+
+void *hash_get_r(hash_t h, fnv_t fnv)
+{
+	list_iterator_t i = list_iterate(h->data);
+	if (i == NULL)
+		return NULL;
+
+	struct hash_node *cur = NULL;
+	while (1)
+	{
+		cur = list_iterate_next(i);
+		if (cur == NULL || cur->hash == fnv)
+			break;
+	}
+
+	list_iterate_end(i);
+	if (cur == NULL)
+		return cur;
+	return cur->value;
+}
+
+void *hash_delete_r(hash_t h, fnv_t fnv)
+{
+	list_iterator_t i = list_iterate(h->data);
+	if (i == NULL)
+		return NULL;
+
+	struct hash_node *cur = NULL;
+	unsigned int offset = 0;
+	while (1)
+	{
+		cur = list_iterate_next(i);
+		if (cur == NULL || cur->hash == fnv)
+			break;
+		++offset;
+	}
+
+	list_iterate_end(i);
+	if (cur == NULL)
+		return NULL;
+
+	void *ret = cur->value;
+	list_delete(h->data, offset);
+	free(cur);
+	return ret;
+}
+
+void *hash_set(hash_t h, void *k, unsigned int ksize, void *v)
+{
+	return hash_set_r(h, fnv_calc(h->bits, k, ksize), v);
 }
 
 void *hash_get(hash_t h, void *k, unsigned int ksize)
 {
-	int length = list_length(h->data);
-	if (length == 0)
-		return NULL;
-
-	fnv_t hash = fnv_calc(h->bits, k, ksize);
-
-	for (int i = 0; i < length; ++i)
-	{
-		struct hash_node *node = (struct hash_node *)list_get(h->data, i);
-		if (node == NULL)
-			continue;
-
-		if (node->hash == hash)
-			return node->value;
-	}
-
-	return NULL;
+	return hash_get_r(h, fnv_calc(h->bits, k, ksize));
 }
 
 void *hash_delete(hash_t h, void *k, unsigned int ksize)
 {
-	int length = list_length(h->data);
-	if (length == 0)
-		return NULL;
-
-	fnv_t hash = fnv_calc(h->bits, k, ksize);
-	void *ret = NULL;
-
-	for (int i = 0; i < length; ++i)
-	{
-		struct hash_node *node = (struct hash_node *)list_get(h->data, i);
-
-		if (node->hash == hash)
-		{
-			ret = node->value;
-			free(node);
-			list_delete(h->data, i);
-			return ret;
-		}
-	}
-
-	return ret;
-}
-
-void _clean_iterator(unsigned int i, void *hnode_r, void *unused)
-{
-	free(hnode_r);
+	return hash_delete_r(h, fnv_calc(h->bits, k, ksize));
 }
 
 void hash_clean(hash_t h)
 {
-	list_iterate(h->data, _clean_iterator, NULL);
+	list_iterator_t i = list_iterate(h->data);
+	if (i == NULL)
+		goto clean;
+
+	void *cur = NULL;
+	while (1)
+	{
+		cur = list_iterate_next(i);
+		if (cur == NULL)
+			break;
+		free(cur);
+	}
+
+clean:
 	list_clean(h->data);
 }
 

@@ -18,34 +18,17 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+struct list
+{
+	struct list_node *first_node;
+	struct list_node *last_node;
+};
 
-typedef struct list *list_t;
-typedef struct list_iterator *list_iterator_t;
+struct list_node
+{
+	struct list *list;
+	struct list_node *next;
+	struct list_node *prev;
+	void *data;
+};
 
-list_t list_new ();
-
-void *list_append (list_t l, void *data);
-void *list_prepend (list_t l, void *data);
-void *list_insert (list_t l, void *data, int offset);
-
-void *list_get (list_t l, int offset);
-int list_find (list_t l, void *data);
-
-void *list_delete (list_t l, int offset);
-
-/* The difference between list_destroy and list_clean is simple:
- * list_clean will only remove the list nodes, while list_destroy
- * will also destroy the internal list structure. So you should only
- * use list_destroy if you will never use the list again.
- */
-void list_destroy (list_t l);
-void list_clean (list_t l);
-
-int list_length (list_t l);
-void list_rebuild (list_t l);
-
-/* The wonderful new iterator structure */
-list_iterator_t list_iterate(list_t l);
-void *list_iterate_next(list_iterator_t i);
-void list_iterate_end(list_iterator_t i);

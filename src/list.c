@@ -21,19 +21,7 @@
 #include <f/list.h>
 #include <stdlib.h>
 
-struct list
-{
-	struct list_node *first_node;
-	struct list_node *last_node;
-};
-
-struct list_node
-{
-	struct list *list;
-	struct list_node *next;
-	struct list_node *prev;
-	void *data;
-};
+#include "list.h"
 
 static inline struct list_node *get_node(list_t l, int offset)
 {
@@ -216,9 +204,3 @@ int list_length(list_t l)
 	return length;
 }
 
-void list_iterate(list_t l, list_iterator_t iter, void *data)
-{
-	struct list_node *node = l->first_node;
-	for (unsigned int i = 0; node != NULL; node = node->next, ++i)
-		iter(i, node->data, data);
-}

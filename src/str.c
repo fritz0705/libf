@@ -225,14 +225,6 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 	return newstr;
 }
 
-static void _dump_iterator(unsigned int i, void *str_v, void *data)
-{
-	struct str_chunk *c = str_v;
-	char **offset = data;
-	memcpy(*offset, c->data, c->length);
-	*offset += c->length;
-}
-
 char *str_dump(str_t str)
 {
 	unsigned int length = str_length(str);
@@ -242,35 +234,60 @@ char *str_dump(str_t str)
 	dump[length] = 0;
 
 	char *offset = dump;
-	list_iterate(str->chunks, _dump_iterator, &offset);
+	list_iterator_t i = list_iterate(str->chunks);
+	if (i == NULL)
+	{
+		free(dump);
+		return NULL;
+	}
+
+	while (1)
+	{
+		struct str_chunk *c = list_iterate_next(i);
+		if (c == NULL)
+			break;
+		memcpy(offset, c->data, c->length);
+		offset += c->length;
+	}
+
+	list_iterate_end(i);
 
 	return dump;
-}
-
-static void _length_iterator(unsigned int i, void *str_v, void *data)
-{
-	unsigned int *length = data;
-	struct str_chunk *chunk = str_v;
-
-	*length += chunk->length;
 }
 
 unsigned int str_length(str_t str)
 {
 	unsigned int length = 0;
-	list_iterate(str->chunks, _length_iterator, &length);
+	list_iterator_t i = list_iterate(str->chunks);
+	if (i == NULL)
+		return 0;
+
+	while (1)
+	{
+		struct str_chunk *c = list_iterate_next(i);
+		if (c == NULL)
+			break;
+		length += c->length;
+	}
 
 	return length;
 }
 
-static void _clean_iterator(unsigned int i, void *str_v, void *data)
-{
-	freechunk((struct str_chunk *)str_v);
-}
-
 void str_clean(str_t str)
 {
-	list_iterate(str->chunks, _clean_iterator, NULL);
+	list_iterator_t i = list_iterate(str->chunks);
+	if (i == NULL)
+		goto clean;
+
+	while (1)
+	{
+		struct str_chunk *c = list_iterate_next(i);
+		if (c == NULL)
+			break;
+		freechunk(c);
+	}
+
+clean:
 	list_clean(str->chunks);
 }
 

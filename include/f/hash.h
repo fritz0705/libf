@@ -22,6 +22,8 @@
 
 #include <sys/types.h>
 
+#include <f/fnv.h>
+
 typedef struct hash *hash_t;
 
 hash_t hash_new();
@@ -29,6 +31,10 @@ hash_t hash_new();
 void *hash_set(hash_t h, void *k, unsigned int ksize, void *v);
 void *hash_get(hash_t h, void *k, unsigned int ksize);
 void *hash_delete(hash_t h, void *k, unsigned int ksize);
+
+void *hash_set_r(hash_t h, fnv_t fnv, void *value);
+void *hash_get_r(hash_t h, fnv_t fnv);
+void *hash_delete_r(hash_t h, fnv_t fnv);
 
 unsigned int hash_size(hash_t h);
 
