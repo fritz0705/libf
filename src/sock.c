@@ -26,35 +26,76 @@
 #include <sys/un.h>
 #include <unistd.h>
 
-#include <string.h>
-
-#include <arpa/inet.h>
-
-int sock_connect(char *addr)
+int sock_ipv4()
 {
-	return sock_connect_unix(addr);
+	return socket(AF_INET, SOCK_STREAM, 0);
 }
 
-int sock_listen(char *addr)
+int sock_ipv6()
 {
-	return sock_listen_unix(addr);
+	return socket(AF_INET6, SOCK_STREAM, 0);
 }
 
-int sock_connect_ipv6(char *addr, int port)
+int sock_unix()
 {
-	int sock = socket(AF_INET6, SOCK_STREAM, 0);
+	return socket(AF_UNIX, SOCK_STREAM, 0);
+}
+
+int sock_connect(struct sockaddr *a)
+{
+	switch (a->sa_family)
+	{
+		case AF_INET:
+			return sock_connect_ipv4(a);
+		case AF_INET6:
+			return sock_connect_ipv6(a);
+		case AF_UNIX:
+			return sock_connect_unix(a);
+	}
+
+	return -1;
+}
+
+int sock_listen(struct sockaddr *a, int backlog)
+{
+	switch (a->sa_family)
+	{
+		case AF_INET:
+			return sock_listen_ipv4(a, backlog);
+		case AF_INET6:
+			return sock_listen_ipv6(a, backlog);
+		case AF_UNIX:
+			return sock_listen_unix(a, backlog);
+	}
+
+	return -1;
+}
+
+int sock_bind(struct sockaddr *a)
+{
+	switch(a->sa_family)
+	{
+		case AF_INET:
+			return sock_bind_ipv4(a);
+		case AF_INET6:
+			return sock_bind_ipv6(a);
+		case AF_UNIX:
+			return sock_bind_unix(a);
+	}
+
+	return -1;
+}
+
+int sock_connect_ipv4(struct sockaddr *a)
+{
+	if (a->sa_family != AF_INET)
+		return -1;
+
+	int sock = sock_ipv4();
 	if (sock == -1)
 		return -1;
 
-	struct sockaddr_in6 saddr = {
-		.sin6_family = AF_INET6
-	};
-	saddr.sin6_port = htons(port);
-
-	if (inet_pton(AF_INET6, addr, &saddr.sin6_addr) != 1)
-		return -1;
-
-	if (connect(sock, (const struct sockaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
+	if (connect(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_in)) < 0)
 	{
 		close(sock);
 		return -1;
@@ -63,19 +104,16 @@ int sock_connect_ipv6(char *addr, int port)
 	return sock;
 }
 
-int sock_connect_unix(char *addr)
+int sock_connect_ipv6(struct sockaddr *a)
 {
-	int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (a->sa_family != AF_INET6)
+		return -1;
+
+	int sock = sock_ipv6();
 	if (sock == -1)
 		return -1;
 
-	struct sockaddr_un saddr = {
-		.sun_family = AF_UNIX
-	};
-
-	strncpy(saddr.sun_path, addr, 108);
-
-	if (connect(sock, (const struct sockaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_un)) < 0)
+	if (connect(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
 	{
 		close(sock);
 		return -1;
@@ -84,19 +122,16 @@ int sock_connect_unix(char *addr)
 	return sock;
 }
 
-int sock_bind_unix(char *addr)
+int sock_connect_unix(struct sockaddr *a)
 {
-	int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (a->sa_family != AF_UNIX)
+		return -1;
+
+	int sock = sock_unix();
 	if (sock == -1)
 		return -1;
 
-	struct sockaddr_un saddr = {
-		.sun_family = AF_UNIX
-	};
-
-	strncpy(saddr.sun_path, addr, 108);
-
-	if (bind(sock, (const struct sockaddr *)&saddr, (socklen_t)sizeof(struct sockaddr_un)) < 0)
+	if (connect(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_un)) < 0)
 	{
 		close(sock);
 		return -1;
@@ -105,13 +140,13 @@ int sock_bind_unix(char *addr)
 	return sock;
 }
 
-int sock_listen_unix(char *addr)
+int sock_listen_ipv4(struct sockaddr *a, int backlog)
 {
-	int sock = sock_bind_unix(addr);
+	int sock = sock_bind_ipv4(a);
 	if (sock == -1)
 		return -1;
 
-	if (listen(sock, 128) < 0)
+	if (listen(sock, backlog) == -1)
 	{
 		close(sock);
 		return -1;
@@ -120,3 +155,86 @@ int sock_listen_unix(char *addr)
 	return sock;
 }
 
+int sock_listen_ipv6(struct sockaddr *a, int backlog)
+{
+	int sock = sock_bind_ipv6(a);
+	if (sock == -1)
+		return -1;
+
+	if (listen(sock, backlog) == -1)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+int sock_listen_unix(struct sockaddr *a, int backlog)
+{
+	int sock = sock_bind_unix(a);
+	if (sock == -1)
+		return -1;
+
+	if (listen(sock, backlog) == -1)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+int sock_bind_ipv4(struct sockaddr *a)
+{
+	if (a->sa_family != AF_INET)
+		return -1;
+
+	int sock = sock_ipv4();
+	if (sock == -1)
+		return -1;
+
+	if (bind(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_in)) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+int sock_bind_ipv6(struct sockaddr *a)
+{
+	if (a->sa_family != AF_INET6)
+		return -1;
+
+	int sock = sock_ipv6();
+	if (sock == -1)
+		return -1;
+
+	if (bind(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_in6)) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}
+
+int sock_bind_unix(struct sockaddr *a)
+{
+	if (a->sa_family != AF_UNIX)
+		return -1;
+
+	int sock = sock_unix();
+	if (sock == -1)
+		return -1;
+
+	if (bind(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_un)) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	return sock;
+}

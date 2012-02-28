@@ -20,18 +20,24 @@
 
 #pragma once
 
-int sock_connect(char *addr);
-int sock_listen(char *addr);
-int sock_bind(char *addr);
+#include <sys/socket.h>
 
-int sock_connect_ipv4(char *addr, int port);
-int sock_connect_ipv6(char *addr, int port);
-int sock_connect_unix(char *addr);
+int sock_ipv4();
+int sock_ipv6();
+int sock_unix();
 
-int sock_listen_ipv4(char *addr, int port);
-int sock_listen_ipv6(char *addr, int port);
-int sock_listen_unix(char *addr);
+int sock_connect(struct sockaddr *a);
+int sock_listen(struct sockaddr *a, int backlog);
+int sock_bind(struct sockaddr *a);
 
-int sock_bind_ipv4(char *addr, int port);
-int sock_bind_ipv6(char *addr, int port);
-int sock_bind_unix(char *addr);
+int sock_connect_ipv4(struct sockaddr *a);
+int sock_connect_ipv6(struct sockaddr *a);
+int sock_connect_unix(struct sockaddr *a);
+
+int sock_listen_ipv4(struct sockaddr *a, int backlog);
+int sock_listen_ipv6(struct sockaddr *a, int backlog);
+int sock_listen_unix(struct sockaddr *a, int backlog);
+
+int sock_bind_ipv4(struct sockaddr *a);
+int sock_bind_ipv6(struct sockaddr *a);
+int sock_bind_unix(struct sockaddr *a);
