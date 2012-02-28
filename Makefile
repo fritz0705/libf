@@ -3,8 +3,10 @@ LD := $(CC)
 AR := $(CROSS)ar
 CTAGS := $(CROSS)ctags
 
+VERSION :=\"0.2\"
+
 override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 $(CFLAGS)
-override CPPFLAGS := -I ./include $(CPPFLAGS)
+override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
 DESTDIR :=/
@@ -15,7 +17,7 @@ VERSION :=0.1
 
 all: static shared
 
-objects := src/list.o src/hash.o src/str.o src/str_fmt.o src/str_io.o src/sock.o src/fnv.o src/str_cmp.o src/fnv_str.o src/list_iterate.o
+objects := src/list.o src/hash.o src/str.o src/str_fmt.o src/str_io.o src/sock.o src/fnv.o src/str_cmp.o src/fnv_str.o src/list_iterate.o src/libf.o
 
 tags:
 	$(CTAGS) -R
