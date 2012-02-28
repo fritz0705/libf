@@ -127,7 +127,7 @@ str_t str_create_c(char c)
 	return str;
 }
 
-str_t str_create_r(char *d, unsigned int length)
+str_t str_create_r(void	*d, unsigned int length)
 {
 	str_t str = str_new();
 	if (str == NULL)
@@ -312,7 +312,7 @@ char str_get(str_t str, int offset)
 	return retval;
 }
 
-str_t str_append_r(str_t str, char *d, unsigned int length)
+str_t str_append_r(str_t str, void *d, unsigned int length)
 {
 	if (str_frozen(str))
 		return NULL;
@@ -484,26 +484,3 @@ int str_offset(str_t str, char c)
 	return -1;
 }
 
-str_t str_build(str_t str, ...)
-{
-	str_t newstr = str_new();
-	if (newstr == NULL)
-		return NULL;
-
-	str_append(newstr, str);
-
-	va_list ap;
-	va_start(ap, str);
-
-	while (1)
-	{
-		str_t cstr = va_arg(ap, str_t);
-		if (cstr == NULL)
-			break;
-		str_append(newstr, cstr);
-	}
-
-	va_end(ap);
-
-	return newstr;
-}

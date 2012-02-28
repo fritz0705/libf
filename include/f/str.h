@@ -36,7 +36,7 @@ str_t str_create_cs(char *cs);
 /* Create string object from char c */
 str_t str_create_c(char c);
 /* Create string object from raw data at position d with length */
-str_t str_create_r(char *d, unsigned int length);
+str_t str_create_r(void *d, unsigned int length);
 
 str_t str_create_i(int num, unsigned int base);
 str_t str_create_ui(unsigned int num, unsigned int base);
@@ -54,7 +54,7 @@ str_t str_sub(str_t str, int offset, unsigned int length);
 str_t str_append(str_t str, str_t right);
 str_t str_append_cs(str_t str, char *cs);
 str_t str_append_c(str_t str, char c);
-str_t str_append_r(str_t str, char *d, unsigned int length);
+str_t str_append_r(str_t str, void *d, unsigned int length);
 
 str_t str_append_i(str_t str, int num, unsigned int base);
 str_t str_append_ui(str_t str, unsigned int num, unsigned int base);
@@ -63,6 +63,8 @@ str_t str_append_fmt(str_t str, const char *fmt, ...);
 str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
 
 str_t str_build(str_t str, ...);
+str_t str_build_cs(char *cs, ...);
+str_t str_build_r(void *d, unsigned int length, ...);
 
 char str_get(str_t str, int offset);
 int str_offset(str_t str, char c);
