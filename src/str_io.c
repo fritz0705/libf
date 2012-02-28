@@ -106,6 +106,63 @@ int str_io_write(int fd, str_t str)
 	return retval;
 }
 
+int str_io_writev(int fd, str_t str, ...)
+{
+	int retval = -1;
+	unsigned int length = 1;
+	va_list ap;
+	va_start(ap, str);
+
+	while (1)
+	{
+		str_t va_str = va_arg(ap, str_t);
+		if (va_str == NULL)
+			break;
+		++length;
+	}
+
+	va_start(ap, str);
+
+	struct iovec *vector = malloc(sizeof(struct iovec) * length);
+	vector[0].iov_base = str_dump(str);
+	if (vector[0].iov_base == NULL)
+	{
+		length = 0;
+		goto free_vector;
+	}
+	vector[0].iov_len = str_length(str);
+
+	unsigned int offset = 1;
+
+	while (1)
+	{
+		str_t va_str = va_arg(ap, str_t);
+		if (va_str == NULL)
+			break;
+
+		vector[offset].iov_base = str_dump(va_str);
+		if (vector[offset].iov_base == NULL)
+		{
+			length = offset + 1;
+			goto free_vector;
+		}
+		vector[offset].iov_len = str_length(va_str);
+		++offset;
+	}
+
+	retval = writev(fd, vector, length);
+
+free_vector:
+
+	offset = 0;
+	for (offset = 0; offset < length; ++offset)
+		free(vector[offset].iov_base);
+
+	free(vector);
+
+	return retval;
+}
+
 int str_io_writeline(int fd, str_t str)
 {
 	char *tmp = str_dump(str);

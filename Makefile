@@ -3,7 +3,7 @@ LD := $(CC)
 AR := $(CROSS)ar
 CTAGS := $(CROSS)ctags
 
-VERSION :=\"0.2\"
+VERSION :=\"0.3-dev\"
 
 override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)

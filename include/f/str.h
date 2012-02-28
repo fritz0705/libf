@@ -73,8 +73,12 @@ _Bool str_cmp(str_t left, str_t right);
 
 str_t str_io_readline(int fd);
 str_t str_io_read(int fd, unsigned int octets);
+
 int str_io_write(int fd, str_t str);
 int str_io_writeline(int fd, str_t str);
+
+/* Scatter/gather functionality; you have to terminate the argument list with NULL */
+int str_io_writev(int fd, str_t str, ...);
 
 int str_freeze(str_t str);
 int str_frozen(str_t str);
