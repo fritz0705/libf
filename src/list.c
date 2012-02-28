@@ -20,6 +20,7 @@
 
 #include <f/list.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "list.h"
 
@@ -42,21 +43,36 @@ static inline void recalculate_list(list_t l)
 	l->last_node = cur_node;
 }
 
-static list_t list_init(list_t l)
-{
-	l->first_node = NULL;
-	l->last_node = NULL;
-
-	return l;
-}
-
 list_t list_new()
 {
 	list_t list = malloc(sizeof(struct list));
 	if (list == NULL)
 		return NULL;
 
-	return list_init(list);
+	list->first_node = NULL;
+	list->last_node = NULL;
+
+	return list;
+}
+
+list_t list_build(void *v, ...)
+{
+	list_t list = list_new();
+	va_list ap;
+	va_start(ap, v);
+
+	while (1)
+	{
+		void *e = va_arg(ap, void *);
+		if (e == NULL)
+			break;
+
+		list_append(list, e);
+	}
+
+	va_end(ap);
+
+	return list;
 }
 
 void *list_append(list_t l, void *data)

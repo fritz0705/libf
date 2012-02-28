@@ -24,6 +24,7 @@ typedef struct list *list_t;
 typedef struct list_iterator *list_iterator_t;
 
 list_t list_new ();
+list_t list_build(void *v, ...);
 
 void *list_append (list_t l, void *data);
 void *list_prepend (list_t l, void *data);
