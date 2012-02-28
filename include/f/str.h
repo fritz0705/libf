@@ -62,6 +62,8 @@ str_t str_append_ui(str_t str, unsigned int num, unsigned int base);
 str_t str_append_fmt(str_t str, const char *fmt, ...);
 str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
 
+str_t str_build(str_t str, ...);
+
 char str_get(str_t str, int offset);
 int str_offset(str_t str, char c);
 

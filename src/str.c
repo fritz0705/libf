@@ -483,3 +483,27 @@ int str_offset(str_t str, char c)
 	free(dump);
 	return -1;
 }
+
+str_t str_build(str_t str, ...)
+{
+	str_t newstr = str_new();
+	if (newstr == NULL)
+		return NULL;
+
+	str_append(newstr, str);
+
+	va_list ap;
+	va_start(ap, str);
+
+	while (1)
+	{
+		str_t cstr = va_arg(ap, str_t);
+		if (cstr == NULL)
+			break;
+		str_append(newstr, cstr);
+	}
+
+	va_end(ap);
+
+	return newstr;
+}
