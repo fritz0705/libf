@@ -84,7 +84,6 @@ void *list_append(list_t l, void *data)
 	struct list_node *node = malloc(sizeof(struct list_node));
 
 	node->data = data;
-	node->list = l;
 	node->next = NULL;
 	node->prev = NULL;
 
@@ -108,7 +107,6 @@ void *list_prepend(list_t l, void *data)
 	struct list_node *node = malloc(sizeof(struct list_node));
 
 	node->data = data;
-	node->list = l;
 	node->next = NULL;
 	node->prev = NULL;
 
@@ -138,7 +136,6 @@ void *list_insert(list_t l, void *data, int offset)
 	struct list_node *node = malloc(sizeof(struct list_node));
 
 	node->data = data;
-	node->list = l;
 
 	node->next = next_node;
 	node->prev = prev_node;
