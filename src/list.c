@@ -58,6 +58,10 @@ list_t list_new()
 list_t list_build(void *v, ...)
 {
 	list_t list = list_new();
+	if (list == NULL)
+		return NULL;
+
+	list_append(list, v);
 	va_list ap;
 	va_start(ap, v);
 
