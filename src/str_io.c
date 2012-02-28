@@ -160,6 +160,8 @@ free_vector:
 
 	free(vector);
 
+	va_end(ap);
+
 	return retval;
 }
 
