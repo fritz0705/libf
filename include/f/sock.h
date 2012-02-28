@@ -20,6 +20,10 @@
 
 #pragma once
 
+#if __STDC_HOSTED__ == 0
+#error Socket functions are only available in hosted environment
+#endif
+
 #include <sys/socket.h>
 
 int sock_ipv4();

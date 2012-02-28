@@ -28,3 +28,8 @@ char *libf_version()
 {
 	return VERSION;
 }
+
+_Bool libf_freestanding()
+{
+	return !__STDC_HOSTED__;
+}

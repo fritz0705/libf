@@ -18,7 +18,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdint.h>
+#include <f/_.h>
 #include <f/str.h>
 
 typedef uint64_t fnv_t;

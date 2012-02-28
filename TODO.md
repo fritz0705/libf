@@ -1,4 +1,5 @@
 TODO
 ====
 
-1. Test the whole code
+1. Implement allocation wrapper to do things with freestanding C
+2. Test the whole code

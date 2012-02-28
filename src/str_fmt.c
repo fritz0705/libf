@@ -1,6 +1,6 @@
 /* Copyright (c) 2012 Fritz Grimpen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * Permission is hereby granted, unalloc of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
@@ -18,10 +18,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/str.h>
+#include <f/alloc.h>
 
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
 
 str_t str_append_fmt(str_t str, const char *fmt, ...)
@@ -52,17 +53,17 @@ str_t str_append_vfmt(str_t str, const char *fmt, va_list ap)
 	va_end(aq);
 
 	buflen += 1;
-	char *buf = malloc(buflen);
+	char *buf = alloc(buflen);
 	if (buf == NULL)
 		return NULL;
 	if (vsnprintf(buf, buflen, fmt, ap) < 0)
 	{
-		free(buf);
+		unalloc(buf);
 		return NULL;
 	}
 
 	str_t retstr = str_append_r(str, buf, buflen - 1);
-	free(buf);
+	unalloc(buf);
 
 	return retstr;
 }

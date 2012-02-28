@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <stdarg.h>
-
 /* You will only handle pointers to string objects, therefore you should use str_t
  * instead of struct str *
  */
@@ -41,12 +39,6 @@ str_t str_create_r(void *d, unsigned int length);
 str_t str_create_i(int num, unsigned int base);
 str_t str_create_ui(unsigned int num, unsigned int base);
 
-/* Create string object using vsnprintf(3). Please consider, that this method is
- * not a good style!
- */
-str_t str_create_fmt(const char *fmt, ...);
-str_t str_create_vfmt(const char *fmt, va_list ap);
-
 /* Build new string object consisting of left and right */
 str_t str_join(str_t left, str_t right);
 str_t str_sub(str_t str, int offset, unsigned int length);
@@ -58,13 +50,6 @@ str_t str_append_r(str_t str, void *d, unsigned int length);
 
 str_t str_append_i(str_t str, int num, unsigned int base);
 str_t str_append_ui(str_t str, unsigned int num, unsigned int base);
-
-str_t str_append_fmt(str_t str, const char *fmt, ...);
-str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
-
-str_t str_build(str_t str, ...);
-str_t str_build_cs(char *cs, ...);
-str_t str_build_r(void *d, unsigned int length, ...);
 
 char str_get(str_t str, int offset);
 int str_offset(str_t str, char c);
@@ -78,14 +63,32 @@ _Bool str_cmp(str_t left, str_t right);
 str_t str_io_readline(int fd);
 str_t str_io_read(int fd, unsigned int octets);
 
+int str_freeze(str_t str);
+int str_frozen(str_t str);
+
+void str_clean(str_t str);
+void str_destroy(str_t str);
+
+#if __STDC_HOSTED__ == 1
+#include <stdarg.h>
+
+/* Create string object using vsnprintf(3). Please consider, that this method is
+ * not a good style!
+ */
+str_t str_create_fmt(const char *fmt, ...);
+str_t str_create_vfmt(const char *fmt, va_list ap);
+
+str_t str_append_fmt(str_t str, const char *fmt, ...);
+str_t str_append_vfmt(str_t str, const char *fmt, va_list ap);
+
+str_t str_build(str_t str, ...);
+str_t str_build_cs(char *cs, ...);
+str_t str_build_r(void *d, unsigned int length, ...);
+
 int str_io_write(int fd, str_t str);
 int str_io_writeline(int fd, str_t str);
 
 /* Scatter/gather functionality; you have to terminate the argument list with NULL */
 int str_io_writev(int fd, str_t str, ...);
 
-int str_freeze(str_t str);
-int str_frozen(str_t str);
-
-void str_clean(str_t str);
-void str_destroy(str_t str);
+#endif

@@ -1,6 +1,6 @@
 /* Copyright (c) 2012 Fritz Grimpen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * Permission is hereby granted, unalloc of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
@@ -18,11 +18,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/str.h>
+#include <f/alloc.h>
 
 #include <unistd.h>
-#include <stdlib.h>
-
 #include <sys/uio.h>
 
 static char *newline = "\r\n";
@@ -77,20 +77,20 @@ str_t str_io_readline(int fd)
 
 str_t str_io_read(int fd, unsigned int octets)
 {
-	char *buf = malloc(octets);
+	char *buf = alloc(octets);
 	if (buf == NULL)
 		return NULL;
 
 	int bytes = read(fd, buf, octets);
 	if (bytes < 0)
 	{
-		free(buf);
+		unalloc(buf);
 		return NULL;
 	}
 
 	str_t str = str_create_r(buf, bytes);
 	
-	free(buf);
+	unalloc(buf);
 	return str;
 }
 
@@ -101,7 +101,7 @@ int str_io_write(int fd, str_t str)
 		return -1;
 
 	int retval = write(fd, tmp, str_length(str));
-	free(tmp);
+	unalloc(tmp);
 
 	return retval;
 }
@@ -123,12 +123,12 @@ int str_io_writev(int fd, str_t str, ...)
 
 	va_start(ap, str);
 
-	struct iovec *vector = malloc(sizeof(struct iovec) * length);
+	struct iovec *vector = alloc(sizeof(struct iovec) * length);
 	vector[0].iov_base = str_dump(str);
 	if (vector[0].iov_base == NULL)
 	{
 		length = 0;
-		goto free_vector;
+		goto unalloc_vector;
 	}
 	vector[0].iov_len = str_length(str);
 
@@ -144,7 +144,7 @@ int str_io_writev(int fd, str_t str, ...)
 		if (vector[offset].iov_base == NULL)
 		{
 			length = offset + 1;
-			goto free_vector;
+			goto unalloc_vector;
 		}
 		vector[offset].iov_len = str_length(va_str);
 		++offset;
@@ -152,13 +152,13 @@ int str_io_writev(int fd, str_t str, ...)
 
 	retval = writev(fd, vector, length);
 
-free_vector:
+unalloc_vector:
 
 	offset = 0;
 	for (offset = 0; offset < length; ++offset)
-		free(vector[offset].iov_base);
+		unalloc(vector[offset].iov_base);
 
-	free(vector);
+	unalloc(vector);
 
 	va_end(ap);
 
@@ -178,7 +178,7 @@ int str_io_writeline(int fd, str_t str)
 	vector[1].iov_len = 2;
 
 	int retval = writev(fd, vector, 2);
-	free(tmp);
+	unalloc(tmp);
 
 	return retval;
 }

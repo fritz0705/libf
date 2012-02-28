@@ -1,6 +1,6 @@
 /* Copyright (c) 2012 Fritz Grimpen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * Permission is hereby granted, unalloc of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
@@ -18,30 +18,40 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/str.h>
 #include <f/list.h>
+#include <f/alloc.h>
 
 #include "str.h"
 
-#include <stdlib.h>
-#include <string.h>
+static inline unsigned int __strlen(char *s)
+{
+	unsigned int len = 0;
+	while (*s != '\0') {
+		++len;
+		++s;
+	}
+	return len;
+}
 
 static inline struct str_chunk *newchunk(char *d, int len)
 {
-	struct str_chunk *chunk = malloc(sizeof(struct str_chunk));
+	struct str_chunk *chunk = alloc(sizeof(struct str_chunk));
 	if (chunk == NULL)
 		return NULL;
 
 	chunk->length = len;
 	chunk->refs = 1;
-	chunk->data = malloc(len);
+	chunk->data = alloc(len);
 	if (chunk->data == NULL)
 	{
-		free(chunk);
+		unalloc(chunk);
 		return NULL;
 	}
 
-	memcpy(chunk->data, d, len);
+	for (int off = 0; off < len; ++off)
+		chunk->data[off] = d[off];
 	return chunk;
 }
 
@@ -50,13 +60,13 @@ static inline void usechunk(struct str_chunk *c)
 	++c->refs;
 }
 
-static inline void freechunk(struct str_chunk *c)
+static inline void unallocchunk(struct str_chunk *c)
 {
 	--c->refs;
 	if (c->refs == 0)
 	{
-		free(c->data);
-		free(c);
+		unalloc(c->data);
+		unalloc(c);
 	}
 }
 
@@ -70,7 +80,7 @@ static unsigned int getabsoffset(str_t str, int offset)
 
 str_t str_new()
 {
-	str_t str = malloc(sizeof(struct str));
+	str_t str = alloc(sizeof(struct str));
 	if (str == NULL)
 		return NULL;
 
@@ -179,12 +189,12 @@ str_t str_normalize(str_t str)
 	str_t newstr = str_new();
 	if (newstr == NULL)
 	{
-		free(tmp);
+		unalloc(tmp);
 		return NULL;
 	}
 
 	struct str_chunk *c = newchunk(tmp, str_length(str));
-	free(tmp);
+	unalloc(tmp);
 	if (c == NULL)
 	{
 		str_destroy(newstr);
@@ -205,7 +215,7 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 	str_t newstr = str_new();
 	if (newstr == NULL)
 	{
-		free(tmp);
+		unalloc(tmp);
 		return NULL;
 	}
 
@@ -214,21 +224,21 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 	struct str_chunk *newc = newchunk(tmp + absoffset, length);
 	if (newc == NULL)
 	{
-		free(tmp);
-		free(newstr);
+		unalloc(tmp);
+		unalloc(newstr);
 		return NULL;
 	}
 
 	list_append(newstr->chunks, newc);
 
-	free(tmp);
+	unalloc(tmp);
 	return newstr;
 }
 
 char *str_dump(str_t str)
 {
 	unsigned int length = str_length(str);
-	char *dump = (char *)malloc(length + 1);
+	char *dump = (char *)alloc(length + 1);
 	if (dump == NULL)
 		return NULL;
 	dump[length] = 0;
@@ -237,7 +247,7 @@ char *str_dump(str_t str)
 	list_iterator_t i = list_iterate(str->chunks);
 	if (i == NULL)
 	{
-		free(dump);
+		unalloc(dump);
 		return NULL;
 	}
 
@@ -246,7 +256,8 @@ char *str_dump(str_t str)
 		struct str_chunk *c = list_iterate_next(i);
 		if (c == NULL)
 			break;
-		memcpy(offset, c->data, c->length);
+		for (unsigned int off = 0; off < c->length; ++off)
+			offset[off] = c->data[off];
 		offset += c->length;
 	}
 
@@ -284,7 +295,7 @@ void str_clean(str_t str)
 		struct str_chunk *c = list_iterate_next(i);
 		if (c == NULL)
 			break;
-		freechunk(c);
+		unallocchunk(c);
 	}
 
 clean:
@@ -295,7 +306,7 @@ void str_destroy(str_t str)
 {
 	str_clean(str);
 	list_destroy(str->chunks);
-	free(str);
+	unalloc(str);
 }
 
 char str_get(str_t str, int offset)
@@ -308,7 +319,7 @@ char str_get(str_t str, int offset)
 
 	char retval = cstr[absoffset];
 
-	free(cstr);
+	unalloc(cstr);
 	return retval;
 }
 
@@ -343,7 +354,7 @@ str_t str_append_cs(str_t str, char *cs)
 	if (str_frozen(str))
 		return NULL;
 
-	struct str_chunk *chunk = newchunk(cs, strlen(cs));
+	struct str_chunk *chunk = newchunk(cs, __strlen(cs));
 	if (chunk == NULL)
 		return NULL;
 
@@ -367,7 +378,7 @@ str_t str_append(str_t str, str_t right)
 	return str;
 }
 
-int str_freeze(str_t str)
+int str_unallocze(str_t str)
 {
 	str->frozen = 1;
 	return 1;
@@ -442,7 +453,7 @@ str_t str_create_i(int num, unsigned int base)
 
 	if (str_append_i(str, num, base) == NULL)
 	{
-		free(str);
+		unalloc(str);
 		return NULL;
 	}
 
@@ -475,12 +486,12 @@ int str_offset(str_t str, char c)
 	{
 		if (dump[i] == c)
 		{
-			free(dump);
+			unalloc(dump);
 			return i;
 		}
 	}
 
-	free(dump);
+	unalloc(dump);
 	return -1;
 }
 

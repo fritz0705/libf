@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <sys/types.h>
-
 #include <f/fnv.h>
 
 typedef struct hash *hash_t;

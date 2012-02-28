@@ -21,4 +21,16 @@
 #pragma once
 
 char *libf_version();
+_Bool libf_freestanding();
+
+#if __STDC_HOSTED__ == 0
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
+typedef __UINT64_TYPE__ uint64_t;
+#else
+#include <stdint.h>
+#include <stdlib.h>
+#endif
 

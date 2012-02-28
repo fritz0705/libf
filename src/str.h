@@ -18,7 +18,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdbool.h>
 #include <f/list.h>
 
 struct str_chunk
@@ -31,5 +30,5 @@ struct str_chunk
 struct str
 {
 	list_t chunks;
-	bool frozen;
+	_Bool frozen;
 };

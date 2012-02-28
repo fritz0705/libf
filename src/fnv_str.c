@@ -1,6 +1,6 @@
 /* Copyright (c) 2012 Fritz Grimpen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * Permission is hereby granted, unalloc of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
@@ -18,9 +18,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/fnv.h>
-
-#include <stdlib.h>
+#include <f/alloc.h>
 
 fnv_t fnv_str_calc(unsigned int bits, str_t str)
 {
@@ -30,7 +30,7 @@ fnv_t fnv_str_calc(unsigned int bits, str_t str)
 
 	fnv_t result = fnv_calc(bits, dump, str_length(str));
 
-	free(dump);
+	unalloc(dump);
 	return result;
 }
 
@@ -42,6 +42,6 @@ fnv_t fnv_str_calc_1a(unsigned int bits, str_t str)
 
 	fnv_t result = fnv_calc_1a(bits, dump, str_length(str));
 
-	free(dump);
+	unalloc(dump);
 	return result;
 }

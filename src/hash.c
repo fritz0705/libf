@@ -1,6 +1,6 @@
 /* Copyright (c) 2012 Fritz Grimpen
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * Permission is hereby granted, unalloc of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
@@ -18,11 +18,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/hash.h>
 #include <f/list.h>
-
-#include <stdint.h>
-#include <stdlib.h>
+#include <f/alloc.h>
 
 struct hash_node
 {
@@ -38,14 +37,14 @@ struct hash
 
 hash_t hash_new()
 {
-	hash_t h = malloc(sizeof(struct hash));
+	hash_t h = alloc(sizeof(struct hash));
 	if (h == NULL)
 		return NULL;
 
 	h->data = list_new();
 	if (h->data == NULL)
 	{
-		free(h);
+		unalloc(h);
 		return NULL;
 	}
 	h->bits = 64;
@@ -55,7 +54,7 @@ hash_t hash_new()
 
 void *hash_set_r(hash_t h, fnv_t fnv, void *val)
 {
-	struct hash_node *node = malloc(sizeof(struct hash_node));
+	struct hash_node *node = alloc(sizeof(struct hash_node));
 	if (node == NULL)
 		return NULL;
 
@@ -64,7 +63,7 @@ void *hash_set_r(hash_t h, fnv_t fnv, void *val)
 
 	if (list_append(h->data, node) == NULL)
 	{
-		free(node);
+		unalloc(node);
 		return NULL;
 	}
 
@@ -113,7 +112,7 @@ void *hash_delete_r(hash_t h, fnv_t fnv)
 
 	void *ret = cur->value;
 	list_delete(h->data, offset);
-	free(cur);
+	unalloc(cur);
 	return ret;
 }
 
@@ -144,7 +143,7 @@ void hash_clean(hash_t h)
 		cur = list_iterate_next(i);
 		if (cur == NULL)
 			break;
-		free(cur);
+		unalloc(cur);
 	}
 
 clean:
@@ -160,6 +159,6 @@ void hash_destroy(hash_t h)
 {
 	hash_clean(h);
 	list_destroy(h->data);
-	free(h);
+	unalloc(h);
 }
 
