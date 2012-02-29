@@ -28,6 +28,7 @@ struct list_iterator
 {
 	struct list *list;
 	struct list_node *current;
+	unsigned int offset;
 };
 
 list_iterator_t list_iterate(list_t l)
@@ -38,8 +39,14 @@ list_iterator_t list_iterate(list_t l)
 
 	iter->list = l;
 	iter->current = l->first_node;
+	iter->offset = 0;
 
 	return iter;
+}
+
+unsigned int list_iterate_offset(list_iterator_t i)
+{
+	return i->offset;
 }
 
 void *list_iterate_next(list_iterator_t i)
@@ -49,6 +56,7 @@ void *list_iterate_next(list_iterator_t i)
 
 	void *val = i->current->data;
 	i->current = i->current->next;
+	++i->offset;
 
 	return val;
 }

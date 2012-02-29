@@ -48,5 +48,6 @@ void list_rebuild (list_t l);
 
 /* The wonderful new iterator structure */
 list_iterator_t list_iterate(list_t l);
+unsigned int list_iterate_offset(list_iterator_t i);
 void *list_iterate_next(list_iterator_t i);
 void list_iterate_end(list_iterator_t i);
