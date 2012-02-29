@@ -13,6 +13,7 @@ override LDFLAGS := $(LDFLAGS)
 
 ifeq ($(ENV),freestanding)
 override CFLAGS += -ffreestanding -nostdinc
+override LDFLAGS += -nostdlib
 endif
 
 DESTDIR :=/
