@@ -18,19 +18,31 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
 #include <f/alloc.h>
-
-static void *(*alloc_cb)(unsigned int);
-static void (*unalloc_cb)(void *);
 
 #if __STDC_HOSTED__ == 1
 #include <stdlib.h>
-alloc_cb = malloc;
-unalloc_cb = free;
-#else
-alloc_cb = NULL;
-unalloc_cb = NULL;
 #endif
+
+#ifndef ALLOC_CB
+#if __STDC_HOSTED__ == 1
+#define ALLOC_CB malloc
+#else
+#define ALLOC_CB NULL
+#endif
+#endif
+
+#ifndef UNALLOC_CB
+#if __STDC_HOSTED__ == 1
+#define UNALLOC_CB free
+#else
+#define UNALLOC_CB NULL
+#endif
+#endif
+
+static void *(*alloc_cb)(unsigned int) = ALLOC_CB;
+static void (*unalloc_cb)(void *) = UNALLOC_CB;
 
 void *alloc(unsigned int length)
 {
@@ -43,7 +55,7 @@ void unalloc(void *a)
 {
 	if (unalloc_cb == NULL)
 		return;
-	unalloc_cb(a);
+	return unalloc_cb(a);
 }
 
 void alloc_setup(void *(*callback)(unsigned int))
