@@ -22,5 +22,5 @@
 
 void *alloc(unsigned int length);
 void unalloc(void *a);
-void alloc_setup(void *(*callback)(unsigned int));
+void alloc_setup(void *(*callback)(__SIZE_TYPE__));
 void unalloc_setup(void (*callback)(void *));
