@@ -41,10 +41,10 @@
 #endif
 #endif
 
-static void *(*alloc_cb)(__SIZE_TYPE__) = ALLOC_CB;
+static void *(*alloc_cb)(size_t) = ALLOC_CB;
 static void (*unalloc_cb)(void *) = UNALLOC_CB;
 
-void *alloc(unsigned int length)
+void *alloc(size_t length)
 {
 	if (alloc_cb == NULL)
 		return NULL;
@@ -58,7 +58,7 @@ void unalloc(void *a)
 	unalloc_cb(a);
 }
 
-void alloc_setup(void *(*callback)(__SIZE_TYPE__))
+void alloc_setup(void *(*callback)(size_t))
 {
 	alloc_cb = callback;
 }

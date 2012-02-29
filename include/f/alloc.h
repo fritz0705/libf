@@ -20,7 +20,9 @@
 
 #pragma once
 
-void *alloc(unsigned int length);
+#include <f/_.h>
+
+void *alloc(size_t length);
 void unalloc(void *a);
-void alloc_setup(void *(*callback)(__SIZE_TYPE__));
+void alloc_setup(void *(*callback)(size_t));
 void unalloc_setup(void (*callback)(void *));
