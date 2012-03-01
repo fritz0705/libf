@@ -28,6 +28,13 @@
 
 #include "list.h"
 
+static inline int absoffset(list_t l, int offset)
+{
+	if (offset < 0)
+		return list_length(l) + offset;
+	return offset;
+}
+
 static inline struct list_node *get_node(list_t l, int offset)
 {
 	struct list_node *node = l->first_node;
@@ -35,16 +42,6 @@ static inline struct list_node *get_node(list_t l, int offset)
 		node = node->next;
 
 	return node;
-}
-
-static inline void recalculate_list(list_t l)
-{
-	struct list_node *cur_node = l->first_node;
-	int i;
-	for (i = 0; cur_node != NULL; ++i)
-		cur_node = cur_node->next;
-
-	l->last_node = cur_node;
 }
 
 list_t list_new()
@@ -109,6 +106,8 @@ void *list_prepend(list_t l, void *data)
 
 void *list_insert(list_t l, void *data, int offset)
 {
+	offset = absoffset(l, offset);
+
 	struct list_node *next_node = get_node(l, offset);
 	if (next_node == NULL)
 		return NULL;
@@ -132,6 +131,8 @@ void *list_insert(list_t l, void *data, int offset)
 
 void *list_get(list_t l, int offset)
 {
+	offset = absoffset(l, offset);
+
 	return get_node(l, offset)->data;
 }
 
@@ -150,6 +151,8 @@ int list_find(list_t l, void *data)
 
 void *list_delete(list_t l, int offset)
 {
+	offset = absoffset(l, offset);
+
 	struct list_node *node = get_node(l, offset);
 	if (node == NULL)
 		return NULL;
@@ -184,11 +187,6 @@ void list_destroy(list_t l)
 {
 	list_clean(l);
 	unalloc(l);
-}
-
-void list_rebuild(list_t l)
-{
-	recalculate_list(l);
 }
 
 int list_length(list_t l)

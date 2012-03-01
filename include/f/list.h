@@ -44,7 +44,6 @@ void list_destroy (list_t l);
 void list_clean (list_t l);
 
 int list_length (list_t l);
-void list_rebuild (list_t l);
 
 /* The wonderful new iterator structure */
 list_iterator_t list_iterate(list_t l);
