@@ -378,7 +378,7 @@ str_t str_append(str_t str, str_t right)
 	return str;
 }
 
-int str_unallocze(str_t str)
+int str_freeze(str_t str)
 {
 	str->frozen = 1;
 	return 1;
