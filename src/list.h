@@ -26,6 +26,7 @@ struct list
 
 struct list_node
 {
+	struct list *list;
 	struct list_node *next;
 	struct list_node *prev;
 	void *data;
