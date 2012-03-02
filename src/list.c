@@ -125,6 +125,8 @@ void *list_insert(list_t l, void *data, int offset)
 	next_node->prev = node;
 	if (prev_node == NULL)
 		l->first_node = node;
+	else
+		prev_node->next = node;
 
 	return data;
 }
