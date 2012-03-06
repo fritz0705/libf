@@ -35,6 +35,7 @@ objects += src/hash.o
 objects += src/fnv.o
 objects += src/fnv_str.o src/str.o src/str_cmp.o
 objects += src/alloc.o
+objects += src/bitvec.o
 ifeq ($(ENV),hosted)
 objects += src/str_fmt.o src/str_io.o src/str_build.o
 objects += src/sock.o

@@ -20,28 +20,19 @@
 
 #pragma once
 
-#if __STDC_HOSTED__ == 0
-#ifndef NULL
-#define NULL ((void*)0)
-#endif
+#include <f/_.h>
 
-typedef __UINT64_TYPE__ uint64_t;
-typedef __UINT32_TYPE__ uint32_t;
-typedef __UINT16_TYPE__ uint16_t;
+typedef struct bitvec *bitvec_t;
 
-typedef __SIZE_TYPE__ size_t;
-#else
-#include <stdint.h>
-#include <stdlib.h>
-#endif
+/* Initialize new bitvector with size bits */
+bitvec_t bitvec_new(unsigned int size);
 
-char *libf_version();
-_Bool libf_freestanding();
+_Bool bitvec_get(bitvec_t bitvec, unsigned int off);
 
-static inline void libf_memset(char *p, char val, unsigned int size)
-{
-	char *end = p + size;
-	for (; end > p; ++end)
-		*p = val;
-}
+void bitvec_set(bitvec_t bitvec, unsigned int off);
+void bitvec_unset(bitvec_t bitvec, unsigned int off);
+void bitvec_swap(bitvec_t bitvec, unsigned int off);
+
+void bitvec_clear(bitvec_t bitvec);
+void bitvec_destroy(bitvec_t bitvec);
 
