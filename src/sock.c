@@ -21,18 +21,18 @@
 #include <f/_.h>
 #include <f/alloc.h>
 #include <f/sock.h>
+#include <f/str.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
-#include <sys/un.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#include <string.h>
-
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <net/if.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/un.h>
+#include <fcntl.h>
 
 int sock_ipv4()
 {
@@ -332,3 +332,66 @@ char *sock_if_name(uint32_t index)
 	close(sock);
 	return result;
 }
+
+char *sock_addr_dump(struct sockaddr *a)
+{
+	str_t result = str_new();
+
+	if (result == NULL)
+		return NULL;
+
+	switch (a->sa_family)
+	{
+		case AF_UNIX:
+			;
+			struct sockaddr_un *un_a = (struct sockaddr_un *)a;
+			str_append_cs(result, un_a->sun_path);
+			break;
+		case AF_INET6:
+			;
+			struct sockaddr_in6 *in6_a = (struct sockaddr_in6 *)a;
+
+			str_append_c(result, '[');
+			{
+				char buffer[INET6_ADDRSTRLEN];
+				if (inet_ntop(AF_INET6, &in6_a->sin6_addr, buffer, (socklen_t)INET6_ADDRSTRLEN) == NULL)
+				{
+					str_destroy(result);
+					return NULL;
+				}
+				str_append_cs(result, buffer);
+			}
+
+			if (in6_a->sin6_scope_id > 0)
+			{
+				str_append_c(result, '%');
+				str_append_cs(result, sock_if_name(in6_a->sin6_scope_id));
+			}
+			str_append_c(result, ']');
+			str_append_c(result, ':');
+			str_append_ui(result, ntohs(in6_a->sin6_port), 10);
+		case AF_INET:
+			;
+			struct sockaddr_in *in_a = (struct sockaddr_in *)a;
+
+			{
+				char buffer[INET_ADDRSTRLEN];
+				if (inet_ntop(AF_INET, &in_a->sin_addr, buffer, (socklen_t)INET_ADDRSTRLEN) == NULL)
+				{
+					str_destroy(result);
+					return NULL;
+				}
+				str_append_cs(result, buffer);
+			}
+
+			str_append_c(result, ':');
+			str_append_ui(result, ntohs(in_a->sin_port), 10);
+			break;
+	}
+
+	char *res_str = str_dump(result);
+	str_destroy(result);
+
+	return res_str;
+}
+
