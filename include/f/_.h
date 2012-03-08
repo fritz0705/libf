@@ -50,7 +50,7 @@ _Bool libf_freestanding();
 static inline void libf_memset(char *p, char val, unsigned int size)
 {
 	char *end = p + size;
-	for (; end > p; ++end)
+	for (; end > p; ++p)
 		*p = val;
 }
 
