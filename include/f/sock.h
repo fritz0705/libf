@@ -49,3 +49,5 @@ int sock_bind_unix(struct sockaddr *a);
 void sock_blocking(int sock);
 void sock_nonblocking(int sock);
 
+void sock_addr_port(struct sockaddr *a, int port);
+

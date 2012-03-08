@@ -263,3 +263,20 @@ void sock_nonblocking(int sock)
 		fcntl(sock, F_SETFL, flags);
 	}
 }
+
+void sock_addr_port(struct sockaddr *a, int port)
+{
+	int net_port = htons(port);
+
+	if (a->sa_family == AF_INET)
+	{
+		struct sockaddr_in *in_a = (struct sockaddr_in *)a;
+		in_a->sin_port = net_port;
+	}
+	else if (a->sa_family == AF_INET6)
+	{
+		struct sockaddr_in6 *in6_a = (struct sockaddr_in6 *)a;
+		in6_a->sin6_port = net_port;
+	}
+}
+
