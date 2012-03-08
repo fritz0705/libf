@@ -18,6 +18,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <f/_.h>
+#include <f/alloc.h>
 #include <f/sock.h>
 
 #include <sys/types.h>
@@ -26,6 +28,11 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <string.h>
+
+#include <sys/ioctl.h>
+#include <net/if.h>
 
 int sock_ipv4()
 {
@@ -280,3 +287,48 @@ void sock_addr_port(struct sockaddr *a, int port)
 	}
 }
 
+uint32_t sock_if(char *name)
+{
+	int sock = sock_ipv4();
+	if (sock == -1)
+		return 0;
+
+	struct ifreq req;
+	strncpy(req.ifr_name, name, IFNAMSIZ);
+
+	if (ioctl(sock, SIOCGIFINDEX, &req) < 0)
+	{
+		close(sock);
+		return 0;
+	}
+
+	close(sock);
+	return req.ifr_ifindex;
+}
+
+char *sock_if_name(uint32_t index)
+{
+	int sock = sock_ipv4();
+	if (sock == -1)
+		return NULL;
+
+	struct ifreq req;
+	req.ifr_ifindex = index;
+
+	if (ioctl(sock, SIOCGIFNAME, &req) < 0)
+	{
+		close(sock);
+		return NULL;
+	}
+
+	char *result = alloc(IFNAMSIZ);
+	if (result == NULL)
+	{
+		close(sock);
+		return NULL;
+	}
+	memcpy(result, req.ifr_name, IFNAMSIZ);
+
+	close(sock);
+	return result;
+}

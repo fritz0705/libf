@@ -51,3 +51,6 @@ void sock_nonblocking(int sock);
 
 void sock_addr_port(struct sockaddr *a, int port);
 
+uint32_t sock_if(char *name);
+char *sock_if_name(uint32_t id);
+
