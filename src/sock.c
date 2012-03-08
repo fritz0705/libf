@@ -25,6 +25,7 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 int sock_ipv4()
 {
@@ -237,4 +238,28 @@ int sock_bind_unix(struct sockaddr *a)
 	}
 
 	return sock;
+}
+
+void sock_blocking(int sock)
+{
+	int flags = fcntl(sock, F_GETFL);
+	if (flags < 0)
+		return;
+	if (flags & O_NONBLOCK)
+	{
+		flags &= ~(O_NONBLOCK);
+		fcntl(sock, F_SETFL, flags);
+	}
+}
+
+void sock_nonblocking(int sock)
+{
+	int flags = fcntl(sock, F_GETFL);
+	if (flags < 0)
+		return;
+	if (!(flags & O_NONBLOCK))
+	{
+		flags |= O_NONBLOCK;
+		fcntl(sock, F_SETFL, flags);
+	}
 }

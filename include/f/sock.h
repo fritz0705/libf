@@ -45,3 +45,7 @@ int sock_listen_unix(struct sockaddr *a, int backlog);
 int sock_bind_ipv4(struct sockaddr *a);
 int sock_bind_ipv6(struct sockaddr *a);
 int sock_bind_unix(struct sockaddr *a);
+
+void sock_blocking(int sock);
+void sock_nonblocking(int sock);
+
