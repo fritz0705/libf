@@ -435,6 +435,7 @@ char *sock_addr_dump(struct sockaddr *a)
 
 int sock_family(int fd)
 {
+#ifdef SO_DOMAIN
 	int family;
 	socklen_t len = sizeof(int);
 
@@ -442,6 +443,9 @@ int sock_family(int fd)
 		return -1;
 
 	return family;
+#else
+	return AF_UNSPEC;
+#endif
 }
 
 void sock_mcast_join(int fd, struct sockaddr *a)
