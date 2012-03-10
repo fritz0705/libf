@@ -33,6 +33,7 @@
 #include <string.h>
 #include <sys/un.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 int sock_ipv4()
 {
@@ -469,6 +470,187 @@ char *sock_addr_dump(struct sockaddr *a)
 	str_destroy(result);
 
 	return res_str;
+}
+
+struct sockaddr *sock_addr_load(int family, char *str, int port)
+{
+	struct sockaddr *result = NULL;
+	int hint_family = family;
+	_Bool has_prefix = 0;
+
+	if (hint_family == AF_UNSPEC)
+	{
+		if (str[0] == '[')
+			hint_family = AF_INET6;
+		else if (str[0] == '/')
+			hint_family = AF_UNIX;
+		else if (str[0] == '@')
+			hint_family = AF_UNIX;
+		else
+		{
+			has_prefix = 1;
+			if (!strncmp(str, "ipv6:", 5))
+				hint_family = AF_INET6;
+			else if (!strncmp(str, "ip6:",4))
+				hint_family = AF_INET6;
+			else if (!strncmp(str, "ip:", 3))
+			{
+				hint_family = AF_INET;
+				if (str[3] == '[')
+					hint_family = AF_INET6;
+			}
+			else if (!strncmp(str, "ipv4:", 5))
+				hint_family = AF_INET;
+			else if (!strncmp(str, "ip4:", 4))
+				hint_family = AF_INET;
+			else if (!strncmp(str, "unix:", 5))
+				hint_family = AF_UNIX;
+			else
+			{
+				has_prefix = 0;
+				hint_family = AF_INET;
+			}
+		}
+	}
+
+	struct {
+		char *addr;
+		_Bool alloc_addr;
+		char *iface;
+		char *port;
+	} parts = {
+		.addr = NULL,
+		.alloc_addr = 0,
+		.iface = NULL,
+		.port = NULL
+	};
+
+	char *tmp_addr = str;
+	if (has_prefix)
+		tmp_addr = strchr(str, ':') + 1;
+
+	if (hint_family == AF_INET)
+	{
+		parts.port = strchr(tmp_addr, ':');
+		if (parts.port != NULL)
+		{
+			int size = parts.port - tmp_addr - 1;
+			parts.port += 1;
+			parts.addr = alloc(size + 1);
+			if (parts.addr == NULL)
+				goto abort;
+			parts.alloc_addr = 1;
+			memcpy(parts.addr, tmp_addr, size);
+		}
+		else
+			parts.addr = tmp_addr;
+	}
+	else if (hint_family == AF_INET6)
+	{
+		if (tmp_addr[0] == '[')
+		{
+			parts.port = strchr(tmp_addr, ']');
+			if (parts.port == NULL)
+				goto abort;
+			parts.addr = tmp_addr + 1;
+			int size = parts.port - parts.addr;
+			parts.addr = alloc(size + 1);
+			if (parts.addr == NULL)
+				goto abort;
+			memcpy(parts.addr, tmp_addr + 1, size);
+			parts.alloc_addr = 1;
+		}
+		else if (port < 0)
+			goto abort;
+		else
+			parts.addr = tmp_addr;
+
+		if (parts.port != NULL)
+		{
+			parts.port = strchr(parts.port, ':');
+			if (parts.port == NULL)
+				goto abort;
+			++parts.port;
+		}
+
+		parts.iface = strchr(parts.addr, '%');
+		if (parts.iface != NULL)
+		{
+			++parts.iface;
+			int addr_len = parts.iface - parts.addr - 1;
+			char *new_addr = alloc(addr_len + 1);
+			if (new_addr == NULL)
+				goto abort;
+			int iface_len = strlen(parts.iface);
+			char *new_iface = alloc(iface_len + 1);
+			if (new_iface == NULL)
+			{
+				unalloc(new_addr);
+				goto abort;
+			}
+			memcpy(new_iface, parts.iface, iface_len);
+			memcpy(new_addr, parts.addr, addr_len);
+			if (parts.alloc_addr)
+				unalloc(parts.addr);
+			parts.alloc_addr = 1;
+			parts.addr = new_addr;
+			parts.iface = new_iface;
+		}
+	}
+	else if (hint_family == AF_UNIX)
+		parts.addr = tmp_addr;
+
+	result = sock_addr(hint_family);
+
+	if (result == NULL)
+		goto abort;
+
+	result->sa_family = hint_family;
+
+	if (hint_family == AF_INET)
+	{
+		struct sockaddr_in *result_in = (struct sockaddr_in *)result;
+		result_in->sin_port = htons(atoi(parts.port));
+		if (inet_pton(AF_INET, parts.addr, &result_in->sin_addr) != 1)
+		{
+			unalloc(result);
+			result = NULL;
+			goto abort;
+		}
+	}
+	else if (hint_family == AF_INET6)
+	{
+		struct sockaddr_in6 *result_in6 = (struct sockaddr_in6 *)result;
+		result_in6->sin6_port = htons(atoi(parts.port));
+		result_in6->sin6_scope_id = sock_if(parts.iface);
+		result_in6->sin6_flowinfo = 0;
+		if (inet_pton(AF_INET6, parts.addr, &result_in6->sin6_addr) != 1)
+		{
+			unalloc(result);
+			result = NULL;
+			goto abort;
+		}
+	}
+	else if (hint_family == AF_UNIX)
+	{
+		struct sockaddr_un *result_un = (struct sockaddr_un *)result;
+		strncpy(result_un->sun_path, parts.addr, 107);
+	}
+	else
+	{
+		/* FAIL */
+		unalloc(result);
+		result = NULL;
+	}
+
+abort:
+	if (parts.alloc_addr)
+		unalloc(parts.addr);
+
+	if (parts.iface != NULL)
+		unalloc(parts.iface);
+
+	return result;
 }
 
 int sock_family(int fd)

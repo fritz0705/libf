@@ -57,6 +57,7 @@ void sock_nonblocking(int sock);
 int sock_family(int fd);
 
 struct sockaddr *sock_addr(int family);
+struct sockaddr *sock_addr_load(int family, char *str, int port);
 void sock_addr_port(struct sockaddr *a, int port);
 char *sock_addr_dump(struct sockaddr *a);
 
