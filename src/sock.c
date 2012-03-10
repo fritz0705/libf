@@ -256,7 +256,7 @@ int sock_accept(int fd, struct sockaddr **a)
 	if (addr == NULL)
 		return -1;
 
-	socklen_t socklen = (socklen_t)sizeof(*addr);
+	socklen_t socklen = (socklen_t)sizeof(struct sockaddr_storage);
 	int retval = accept(fd, (struct sockaddr * restrict)addr, &socklen);
 	if (retval < 0)
 	{
@@ -407,6 +407,7 @@ char *sock_addr_dump(struct sockaddr *a)
 			str_append_c(result, ']');
 			str_append_c(result, ':');
 			str_append_ui(result, ntohs(in6_a->sin6_port), 10);
+			break;
 		case AF_INET:
 			;
 			struct sockaddr_in *in_a = (struct sockaddr_in *)a;
