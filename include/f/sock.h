@@ -62,4 +62,6 @@ char *sock_addr_dump(struct sockaddr *a);
 
 uint32_t sock_if(char *name);
 char *sock_if_name(uint32_t id);
+int sock_if_mtu(char *name);
+short sock_if_flags(char *name);
 

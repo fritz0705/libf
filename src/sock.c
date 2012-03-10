@@ -370,6 +370,44 @@ char *sock_if_name(uint32_t index)
 	return result;
 }
 
+int sock_if_mtu(char *name)
+{
+	int sock = sock_ipv4();
+	if (sock == -1)
+		return -1;
+
+	struct ifreq req;
+	strncpy(req.ifr_name, name, IFNAMSIZ);
+
+	if (ioctl(sock, SIOCGIFMTU, &req) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	close(sock);
+	return req.ifr_mtu;
+}
+
+short sock_if_flags(char *name)
+{
+	int sock = sock_ipv4();
+	if (sock == -1)
+		return -1;
+
+	struct ifreq req;
+	strncpy(req.ifr_name, name, IFNAMSIZ);
+
+	if (ioctl(sock, SIOCGIFFLAGS, &req) < 0)
+	{
+		close(sock);
+		return -1;
+	}
+
+	close(sock);
+	return req.ifr_flags;
+}
+
 char *sock_addr_dump(struct sockaddr *a)
 {
 	str_t result = str_new();
