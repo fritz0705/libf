@@ -238,6 +238,7 @@ int sock_bind_unix(struct sockaddr *a)
 	if (sock == -1)
 		return -1;
 
+	unlink(((struct sockaddr_un *)a)->sun_path);
 	if (bind(sock, (const struct sockaddr *)a, (socklen_t)sizeof(struct sockaddr_un)) < 0)
 	{
 		close(sock);
