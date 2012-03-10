@@ -48,6 +48,9 @@ int sock_bind_unix(struct sockaddr *a);
 
 int sock_accept(int fd, struct sockaddr **a);
 
+void sock_mcast_join(int fd, struct sockaddr *a);
+void sock_mcast_leave(int fd, struct sockaddr *a);
+
 void sock_blocking(int sock);
 void sock_nonblocking(int sock);
 

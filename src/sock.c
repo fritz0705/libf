@@ -444,3 +444,31 @@ int sock_family(int fd)
 	return family;
 }
 
+void sock_mcast_join(int fd, struct sockaddr *a)
+{
+	if (a->sa_family != AF_INET6)
+		return;
+
+	struct sockaddr_in6 *ipv6_a = (struct sockaddr_in6 *)a;
+
+	struct ipv6_mreq req;
+	memcpy(&req.ipv6mr_multiaddr, &ipv6_a->sin6_addr, sizeof(struct in6_addr));
+	req.ipv6mr_interface = ipv6_a->sin6_scope_id;
+
+	setsockopt(fd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &req, sizeof(struct ipv6_mreq));
+}
+
+void sock_mcast_leave(int fd, struct sockaddr *a)
+{
+	if (a->sa_family != AF_INET6)
+		return;
+
+	struct sockaddr_in6 *ipv6_a = (struct sockaddr_in6 *)a;
+
+	struct ipv6_mreq req;
+	memcpy(&req.ipv6mr_multiaddr, &ipv6_a->sin6_addr, sizeof(struct in6_addr));
+	req.ipv6mr_interface = ipv6_a->sin6_scope_id;
+
+	setsockopt(fd, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &req, sizeof(struct ipv6_mreq));
+}
+
