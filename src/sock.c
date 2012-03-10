@@ -433,3 +433,14 @@ char *sock_addr_dump(struct sockaddr *a)
 	return res_str;
 }
 
+int sock_family(int fd)
+{
+	int family;
+	socklen_t len = sizeof(int);
+
+	if (getsockopt(fd, SOL_SOCKET, SO_DOMAIN, &family, &len) < 0)
+		return -1;
+
+	return family;
+}
+
