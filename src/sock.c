@@ -247,6 +247,25 @@ int sock_bind_unix(struct sockaddr *a)
 	return sock;
 }
 
+int sock_accept(int fd, struct sockaddr **a)
+{
+	struct sockaddr_storage *addr = alloc(sizeof(struct sockaddr_storage));
+	*a = (struct sockaddr *)addr;
+
+	if (addr == NULL)
+		return -1;
+
+	socklen_t socklen = (socklen_t)sizeof(*addr);
+	int retval = accept(fd, (struct sockaddr * restrict)addr, &socklen);
+	if (retval < 0)
+	{
+		unalloc(addr);
+		*a = NULL;
+	}
+
+	return retval;
+}
+
 void sock_blocking(int sock)
 {
 	int flags = fcntl(sock, F_GETFL);
