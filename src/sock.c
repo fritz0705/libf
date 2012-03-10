@@ -291,6 +291,23 @@ void sock_nonblocking(int sock)
 	}
 }
 
+struct sockaddr *sock_addr(int family)
+{
+	switch (family)
+	{
+		case AF_INET:
+			return alloc(sizeof(struct sockaddr_in));
+		case AF_INET6:
+			return alloc(sizeof(struct sockaddr_in6));
+		case AF_UNIX:
+			return alloc(sizeof(struct sockaddr_un));
+		case AF_UNSPEC:
+			return alloc(sizeof(struct sockaddr_storage));
+	}
+
+	return NULL;
+}
+
 void sock_addr_port(struct sockaddr *a, int port)
 {
 	int net_port = htons(port);
