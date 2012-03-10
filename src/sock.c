@@ -600,6 +600,14 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 	else if (hint_family == AF_UNIX)
 		parts.addr = tmp_addr;
 
+	if (hint_family != AF_UNIX)
+	{
+		if (parts.port != NULL)
+			port = htons(atoi(parts.port));
+		else if (port < 0)
+			goto abort;
+	}
+
 	result = sock_addr(hint_family);
 
 	if (result == NULL)
@@ -621,7 +629,7 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 	else if (hint_family == AF_INET6)
 	{
 		struct sockaddr_in6 *result_in6 = (struct sockaddr_in6 *)result;
-		result_in6->sin6_port = htons(atoi(parts.port));
+		result_in6->sin6_port = port;
 		result_in6->sin6_scope_id = sock_if(parts.iface);
 		result_in6->sin6_flowinfo = 0;
 		if (inet_pton(AF_INET6, parts.addr, &result_in6->sin6_addr) != 1)
