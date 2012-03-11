@@ -613,7 +613,7 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 			port = htons(port);
 	}
 
-	result = sock_addr(hint_family);
+	result = alloc(sizeof(struct sockaddr_storage));
 
 	if (result == NULL)
 		goto abort;
@@ -626,9 +626,10 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 		result_in->sin_port = port;
 		if (inet_pton(AF_INET, parts.addr, &result_in->sin_addr) != 1)
 		{
-			unalloc(result);
-			result = NULL;
-			goto abort;
+			result->sa_family = AF_UNIX;
+			struct sockaddr_un *result_un = (struct sockaddr_un *)result;
+			strncpy(result_un->sun_path, str, 107);
+			goto finish;
 		}
 	}
 	else if (hint_family == AF_INET6)
@@ -660,6 +661,7 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 	}
 
 abort:
+finish:
 	if (parts.alloc_addr)
 		unalloc(parts.addr);
 
