@@ -35,6 +35,10 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+#ifdef IFNAMSIZ
+static int ioctl_sock = -1;
+#endif
+
 int sock_ipv4()
 {
 	return socket(AF_INET, SOCK_STREAM, 0);
@@ -327,86 +331,87 @@ void sock_addr_port(struct sockaddr *a, int port)
 
 uint32_t sock_if(char *name)
 {
-	int sock = sock_ipv4();
-	if (sock == -1)
+#ifdef IFNAMSIZ
+	if (ioctl_sock == -1)
+		ioctl_sock = sock_ipv4();
+	if (ioctl_sock == -1)
 		return 0;
 
 	struct ifreq req;
 	strncpy(req.ifr_name, name, IFNAMSIZ);
 
-	if (ioctl(sock, SIOCGIFINDEX, &req) < 0)
-	{
-		close(sock);
+	if (ioctl(ioctl_sock, SIOCGIFINDEX, &req) < 0)
 		return 0;
-	}
 
-	close(sock);
 	return req.ifr_ifindex;
+#else
+	return 0;
+#endif
 }
 
 char *sock_if_name(uint32_t index)
 {
-	int sock = sock_ipv4();
-	if (sock == -1)
+#ifdef IFNAMSIZ
+	if (ioctl_sock == -1)
+		ioctl_sock = sock_ipv4();
+	if (ioctl_sock == -1)
 		return NULL;
 
 	struct ifreq req;
 	req.ifr_ifindex = index;
 
-	if (ioctl(sock, SIOCGIFNAME, &req) < 0)
-	{
-		close(sock);
+	if (ioctl(ioctl_sock, SIOCGIFNAME, &req) < 0)
 		return NULL;
-	}
 
 	char *result = alloc(IFNAMSIZ);
 	if (result == NULL)
-	{
-		close(sock);
 		return NULL;
-	}
 	memcpy(result, req.ifr_name, IFNAMSIZ);
 
-	close(sock);
 	return result;
+#else
+	return NULL;
+#endif
 }
 
 int sock_if_mtu(char *name)
 {
-	int sock = sock_ipv4();
-	if (sock == -1)
+#ifdef IFNAMSIZ
+	if (ioctl_sock == -1)
+		ioctl_sock = sock_ipv4();
+	if (ioctl_sock == -1)
 		return -1;
 
 	struct ifreq req;
 	strncpy(req.ifr_name, name, IFNAMSIZ);
 
-	if (ioctl(sock, SIOCGIFMTU, &req) < 0)
-	{
-		close(sock);
+	if (ioctl(ioctl_sock, SIOCGIFMTU, &req) < 0)
 		return -1;
-	}
 
-	close(sock);
 	return req.ifr_mtu;
+#else
+	return 0;
+#endif
 }
 
 short sock_if_flags(char *name)
 {
-	int sock = sock_ipv4();
-	if (sock == -1)
+#ifdef IFNAMSIZ
+	if (ioctl_sock == -1)
+		ioctl_sock = sock_ipv4();
+	if (ioctl_sock == -1)
 		return -1;
 
 	struct ifreq req;
 	strncpy(req.ifr_name, name, IFNAMSIZ);
 
-	if (ioctl(sock, SIOCGIFFLAGS, &req) < 0)
-	{
-		close(sock);
+	if (ioctl(ioctl_sock, SIOCGIFFLAGS, &req) < 0)
 		return -1;
-	}
 
-	close(sock);
 	return req.ifr_flags;
+#else
+	return 0;
+#endif
 }
 
 char *sock_addr_dump(struct sockaddr *a)
