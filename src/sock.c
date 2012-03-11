@@ -486,6 +486,8 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 			hint_family = AF_UNIX;
 		else if (str[0] == '@')
 			hint_family = AF_UNIX;
+		else if (str[0] == ':')
+			hint_family = AF_INET6;
 		else
 		{
 			has_prefix = 1;
@@ -534,7 +536,7 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 		parts.port = strchr(tmp_addr, ':');
 		if (parts.port != NULL)
 		{
-			int size = parts.port - tmp_addr - 1;
+			int size = parts.port - tmp_addr;
 			parts.port += 1;
 			parts.addr = alloc(size + 1);
 			if (parts.addr == NULL)
@@ -542,6 +544,8 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 			parts.alloc_addr = 1;
 			memcpy(parts.addr, tmp_addr, size);
 		}
+		else if (port < 0)
+			goto abort;
 		else
 			parts.addr = tmp_addr;
 	}
@@ -619,7 +623,7 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 	if (hint_family == AF_INET)
 	{
 		struct sockaddr_in *result_in = (struct sockaddr_in *)result;
-		result_in->sin_port = htons(atoi(parts.port));
+		result_in->sin_port = port;
 		if (inet_pton(AF_INET, parts.addr, &result_in->sin_addr) != 1)
 		{
 			unalloc(result);
