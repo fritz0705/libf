@@ -568,9 +568,8 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 		if (parts.port != NULL)
 		{
 			parts.port = strchr(parts.port, ':');
-			if (parts.port == NULL)
-				goto abort;
-			++parts.port;
+			if (parts.port != NULL)
+				++parts.port;
 		}
 
 		parts.iface = strchr(parts.addr, '%');
@@ -606,6 +605,8 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 			port = htons(atoi(parts.port));
 		else if (port < 0)
 			goto abort;
+		else
+			port = htons(port);
 	}
 
 	result = sock_addr(hint_family);
@@ -630,7 +631,10 @@ struct sockaddr *sock_addr_load(int family, char *str, int port)
 	{
 		struct sockaddr_in6 *result_in6 = (struct sockaddr_in6 *)result;
 		result_in6->sin6_port = port;
-		result_in6->sin6_scope_id = sock_if(parts.iface);
+		if (parts.iface != NULL)
+			result_in6->sin6_scope_id = sock_if(parts.iface);
+		else
+			result_in6->sin6_scope_id = 0;
 		result_in6->sin6_flowinfo = 0;
 		if (inet_pton(AF_INET6, parts.addr, &result_in6->sin6_addr) != 1)
 		{
