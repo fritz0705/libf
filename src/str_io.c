@@ -94,6 +94,24 @@ str_t str_io_read(int fd, unsigned int octets)
 	return str;
 }
 
+int str_io_readin(int fd, unsigned int octets, str_t str)
+{
+	char *buf = alloc(octets);
+	if (buf == NULL)
+		return -1;
+
+	int bytes = read(fd, buf, octets);
+	if (bytes < 0)
+	{
+		unalloc(buf);
+		return -1;
+	}
+
+	str_append_r(str, buf, bytes);
+	unalloc(buf);
+	return bytes;
+}
+
 int str_io_write(int fd, str_t str)
 {
 	char *tmp = str_dump(str);
