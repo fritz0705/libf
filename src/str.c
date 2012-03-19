@@ -398,6 +398,8 @@ str_t str_append_i(str_t str, int num, unsigned int base)
 {
 	if (str_frozen(str))
 		return NULL;
+	if (num == 0)
+		return str_append_c(str, '0');
 
 	_Bool negative = 0;
 	if (num < 0)
@@ -428,6 +430,8 @@ str_t str_append_ui(str_t str, unsigned int num, unsigned int base)
 {
 	if (str_frozen(str))
 		return NULL;
+	if (num == 0)
+		return str_append_c(str, '0');
 
 	char buffer[__SIZEOF_INT__ * 8 + 1];
 	char *res = buffer + __SIZEOF_INT__ * 8;
