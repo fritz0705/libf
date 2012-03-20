@@ -35,6 +35,14 @@ static inline unsigned int __strlen(char *s)
 	return len;
 }
 
+static inline unsigned int __memcmp(char *l, char *r, int len)
+{
+	for (int i = 0; i < len; ++i)
+		if (l[i] != r[i])
+			return 0;
+	return 1;
+}
+
 static inline struct str_chunk *newchunk(char *d, int len)
 {
 	struct str_chunk *chunk = alloc(sizeof(struct str_chunk));
@@ -507,6 +515,34 @@ int str_offset(str_t str, char c)
 		{
 			unalloc(dump);
 			return i;
+		}
+	}
+
+	unalloc(dump);
+	return -1;
+}
+
+int str_find(str_t str, char *c)
+{
+	char *dump = str_dump(str);
+	if (dump == NULL)
+		return -1;
+
+	int offset = 0;
+	unsigned int len = __strlen(c);
+	int limit = str_length(str) - len;
+
+	if (len > str_length(str))
+	{
+		unalloc(dump);
+		return -1;
+	}
+	for (; offset < limit; ++offset)
+	{
+		if (__memcmp(dump	+ offset, c, len))
+		{
+			unalloc(dump);
+			return offset;
 		}
 	}
 
