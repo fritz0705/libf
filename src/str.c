@@ -530,7 +530,7 @@ int str_find(str_t str, char *c)
 
 	int offset = 0;
 	unsigned int len = __strlen(c);
-	int limit = str_length(str) - len;
+	int limit = str_length(str) - len + 1;
 
 	if (len > str_length(str))
 	{
