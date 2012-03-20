@@ -235,6 +235,21 @@ str_t str_sub(str_t str, int offset, unsigned int length)
 	return newstr;
 }
 
+void str_trim(str_t str, int offset)
+{
+	unsigned int absoffset = getabsoffset(str, offset);
+	
+	unsigned int data_length = str_length(str);
+	char *data = str_dump(str);
+	if (data == NULL)
+		return;
+	
+	str_clean(str);
+
+	if (data_length > absoffset)
+		str_append_r(str, data + absoffset, data_length - absoffset);
+}
+
 char *str_dump(str_t str)
 {
 	unsigned int length = str_length(str);

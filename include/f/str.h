@@ -42,6 +42,7 @@ str_t str_create_ui(unsigned int num, unsigned int base);
 /* Build new string object consisting of left and right */
 str_t str_join(str_t left, str_t right);
 str_t str_sub(str_t str, int offset, unsigned int length);
+void str_trim(str_t str, int offset);
 
 str_t str_append(str_t str, str_t right);
 str_t str_append_cs(str_t str, char *cs);
