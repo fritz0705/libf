@@ -256,6 +256,7 @@ void str_trim(str_t str, int offset)
 
 	if (data_length > absoffset)
 		str_append_r(str, data + absoffset, data_length - absoffset);
+	unalloc(data);
 }
 
 char *str_dump(str_t str)
