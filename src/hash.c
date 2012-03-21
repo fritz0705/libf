@@ -146,6 +146,7 @@ void hash_clean(hash_t h)
 		unalloc(cur);
 	}
 
+	list_iterate_end(i);
 clean:
 	list_clean(h->data);
 }
