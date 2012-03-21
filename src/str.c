@@ -270,6 +270,7 @@ unsigned int str_length(str_t str)
 		length += c->length;
 	}
 
+	list_iterate_end(i);
 	return length;
 }
 
@@ -287,6 +288,7 @@ void str_clean(str_t str)
 		unallocchunk(c);
 	}
 
+	list_iterate_end(i);
 clean:
 	list_clean(str->chunks);
 }
