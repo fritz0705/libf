@@ -43,41 +43,6 @@ static inline unsigned int __memcmp(char *l, char *r, int len)
 	return 1;
 }
 
-static inline struct str_chunk *newchunk(char *d, int len)
-{
-	struct str_chunk *chunk = alloc(sizeof(struct str_chunk));
-	if (chunk == NULL)
-		return NULL;
-
-	chunk->length = len;
-	chunk->refs = 1;
-	chunk->data = alloc(len);
-	if (chunk->data == NULL)
-	{
-		unalloc(chunk);
-		return NULL;
-	}
-
-	for (int off = 0; off < len; ++off)
-		chunk->data[off] = d[off];
-	return chunk;
-}
-
-static inline void usechunk(struct str_chunk *c)
-{
-	++c->refs;
-}
-
-static inline void unallocchunk(struct str_chunk *c)
-{
-	--c->refs;
-	if (c->refs == 0)
-	{
-		unalloc(c->data);
-		unalloc(c);
-	}
-}
-
 static unsigned int getabsoffset(str_t str, int offset)
 {
 	if (offset < 0)
