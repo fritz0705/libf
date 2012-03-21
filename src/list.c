@@ -178,8 +178,12 @@ void *list_delete(list_t l, int offset)
 void list_clean(list_t l)
 {
 	struct list_node *node = l->first_node;
-	for (; node != NULL; node = node->next)
+	while (node != NULL)
+	{
+		struct list_node *next = node->next;
 		unalloc(node);
+		node = next;
+	}
 
 	l->first_node = NULL;
 	l->last_node = NULL;
