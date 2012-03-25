@@ -5,7 +5,7 @@ CTAGS := $(CROSS)ctags
 
 ENV:=hosted
 
-VERSION :=\"0.3-dev\"
+VERSION :=\"0.3\"
 
 override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 -g $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
@@ -18,7 +18,6 @@ endif
 
 DESTDIR :=/
 PREFIX :=/usr/local
-VERSION :=0.1
 
 .PHONY: all clean install tags static shared
 
