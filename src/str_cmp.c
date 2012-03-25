@@ -49,3 +49,15 @@ _Bool str_cmp(str_t left, str_t right)
 
 	return result;
 }
+
+_Bool str_cmp_cs(str_t left, char *right)
+{
+	str_t str_right = str_create_cs(right);
+	if (str_right == NULL)
+		return 0;
+
+	_Bool retval = str_cmp(left, str_right);
+	str_destroy(str_right);
+
+	return retval;
+}

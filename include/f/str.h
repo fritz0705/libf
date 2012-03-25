@@ -62,6 +62,7 @@ str_t str_normalize(str_t str);
 unsigned int str_length(str_t str);
 
 _Bool str_cmp(str_t left, str_t right);
+_Bool str_cmp_cs(str_t left, char *right);
 
 int str_freeze(str_t str);
 int str_frozen(str_t str);
