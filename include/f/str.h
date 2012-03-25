@@ -54,6 +54,7 @@ str_t str_append_ui(str_t str, unsigned int num, unsigned int base);
 
 char str_get(str_t str, int offset);
 int str_offset(str_t str, char c);
+int str_offset_nth(str_t str, char c, int occ);
 int str_find(str_t str, char *c);
 
 char *str_dump(str_t str);

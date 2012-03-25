@@ -490,6 +490,28 @@ int str_offset(str_t str, char c)
 	return -1;
 }
 
+int str_offset_nth(str_t str, char c, int occ)
+{
+	char *dump = str_dump(str);
+	if (dump == NULL)
+		return -1;
+
+	unsigned int len = str_length(str);
+	for (unsigned int i = 0; i < len; ++i)
+	{
+		if (dump[i] == c)
+			--occ;
+		if (occ == 0)
+		{
+			unalloc(dump);
+			return i;
+		}
+	}
+
+	unalloc(dump);
+	return -1;
+}
+
 int str_find(str_t str, char *c)
 {
 	char *dump = str_dump(str);
