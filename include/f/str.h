@@ -52,6 +52,8 @@ str_t str_append_r(str_t str, void *d, unsigned int length);
 str_t str_append_i(str_t str, int num, unsigned int base);
 str_t str_append_ui(str_t str, unsigned int num, unsigned int base);
 
+str_t str_replace(str_t str, char pat, char rep);
+
 char str_get(str_t str, int offset);
 int str_offset(str_t str, char c);
 int str_offset_nth(str_t str, char c, int occ);

@@ -540,3 +540,31 @@ int str_find(str_t str, char *c)
 	return -1;
 }
 
+str_t str_replace(str_t str, char pat, char rep)
+{
+	str_t result = str_new();
+	if (result == NULL)
+		return NULL;
+
+	list_iterator_t i = list_iterate(str->chunks);
+
+	while (1)
+	{
+		struct str_chunk *chunk = list_iterate_next(i);
+		if (chunk == NULL)
+			break;
+
+		struct str_chunk *new_chunk = newchunk(chunk->data, chunk->length);
+		for (unsigned int i = 0; i < new_chunk->length; ++i)
+		{
+			if (new_chunk->data[i] == pat)
+				new_chunk->data[i] = rep;
+		}
+
+		list_append(result->chunks, new_chunk);
+	}
+
+	list_iterate_end(i);
+
+	return result;
+}
