@@ -5,7 +5,7 @@ CTAGS := $(CROSS)ctags
 
 ENV:=hosted
 
-VERSION :=\"0.3\"
+VERSION :=\"0.4-dev\"
 
 override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 -g $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
