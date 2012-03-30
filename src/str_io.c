@@ -37,11 +37,14 @@ str_t str_io_readline(int fd)
 	unsigned int i = 0;
 	while (1)
 	{
-		if (read(fd, &c, 1) == -1)
+		ssize_t readlen = read(fd, &c, 1);
+		if (readlen == -1)
 		{
 			str_destroy(str);
 			return NULL;
 		}
+		else if (readlen == 0)
+			break;
 
 		if (c == '\n' || c == '\r')
 		{
@@ -51,24 +54,7 @@ str_t str_io_readline(int fd)
 				continue;
 		}
 
-		str_t cstr = str_create_c(c);
-		if (cstr == NULL)
-		{
-			str_destroy(str);
-			return NULL;
-		}
-		str_t newstr = str_join(str, str_create_c(c));
-		if (newstr == NULL)
-		{
-			str_destroy(cstr);
-			str_destroy(newstr);
-			return NULL;
-		}
-		str_destroy(str);
-		str_destroy(cstr);
-
-		str = newstr;
-
+		str_append_c(str, c);
 		++i;
 	}
 	
