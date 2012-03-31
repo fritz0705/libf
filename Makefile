@@ -7,7 +7,7 @@ ENV:=hosted
 
 VERSION :=\"0.4-dev\"
 
-override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 -g $(CFLAGS)
+override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 -g -O2 $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
