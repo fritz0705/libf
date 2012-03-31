@@ -68,3 +68,12 @@ static inline _Bool libf_memcmp(char *l, char *r, unsigned int len)
 	return 1;
 }
 
+static inline unsigned int libf_strlen(char *s)
+{
+	unsigned int len = 0;
+	while (*s != '\0') {
+		++len;
+		++s;
+	}
+	return len;
+}

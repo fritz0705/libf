@@ -25,16 +25,7 @@
 
 #include "str.h"
 
-static inline unsigned int __strlen(char *s)
-{
-	unsigned int len = 0;
-	while (*s != '\0') {
-		++len;
-		++s;
-	}
-	return len;
-}
-
+#define __strlen libf_strlen
 #define __memcmp libf_memcmp
 
 static unsigned int getabsoffset(str_t str, int offset)
