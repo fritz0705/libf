@@ -35,13 +35,7 @@ static inline unsigned int __strlen(char *s)
 	return len;
 }
 
-static inline unsigned int __memcmp(char *l, char *r, int len)
-{
-	for (int i = 0; i < len; ++i)
-		if (l[i] != r[i])
-			return 0;
-	return 1;
-}
+#define __memcmp libf_memcmp
 
 static unsigned int getabsoffset(str_t str, int offset)
 {

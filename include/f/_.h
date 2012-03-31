@@ -54,3 +54,17 @@ static inline void libf_memset(char *p, char val, unsigned int size)
 		*p = val;
 }
 
+static inline void libf_memcpy(char *d, char *s, unsigned int size)
+{
+	for (unsigned int i = 0; i < size; ++i)
+		d[i] = s[i];
+}
+
+static inline _Bool libf_memcmp(char *l, char *r, unsigned int len)
+{
+	for (unsigned int i = 0; i < len; ++i)
+		if (l[i] != r[i])
+			return 0;
+	return 1;
+}
+
