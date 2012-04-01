@@ -80,8 +80,8 @@ int array_find(array_t ary, void *element)
 void array_clean(array_t ary)
 {
 	if (ary == NULL)
-		return NULL;
-	list_iterator_t i = list_iterate(ary->element);
+		return;
+	list_iterator_t i = list_iterate(ary->elements);
 
 	while (1)
 	{
@@ -98,7 +98,7 @@ void array_clean(array_t ary)
 void array_destroy(array_t ary)
 {
 	if (ary == NULL)
-		return NULL;
+		return;
 	array_clean(ary);
 	list_destroy(ary->elements);
 	unalloc(ary);
