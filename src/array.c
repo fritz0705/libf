@@ -21,6 +21,7 @@
 #include <f/array.h>
 #include <f/list.h>
 #include <f/alloc.h>
+#include <f/fnv.h>
 
 struct array {
 	size_t length;
@@ -74,6 +75,24 @@ void *array_get(array_t ary, int offset)
 
 int array_find(array_t ary, void *element)
 {
+	fnv_t hash = fnv_calc(64, element, ary->length);
+
+	list_iterator_t i = list_iterate(ary->elements);
+	
+	while (1)
+	{
+		unsigned int off = list_iterate_offset(i);
+		void *elem = list_iterate_next(i);
+		if (elem == NULL)
+			break;
+		if (fnv_calc(64, elem, ary->length) == hash)
+		{
+			list_iterate_end(i);
+			return off;
+		}
+	}
+
+	list_iterate_end(i);
 	return -1;
 }
 
