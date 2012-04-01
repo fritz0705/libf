@@ -49,9 +49,8 @@ _Bool libf_freestanding();
 
 static inline void libf_memset(char *p, char val, unsigned int size)
 {
-	char *end = p + size;
-	for (; end > p; ++p)
-		*p = val;
+	for (unsigned int i = 0; i < size; ++i)
+		p[i] = val;
 }
 
 static inline void libf_memcpy(char *d, char *s, unsigned int size)
