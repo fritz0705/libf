@@ -33,6 +33,8 @@ void bitvec_set(bitvec_t bitvec, unsigned int off);
 void bitvec_unset(bitvec_t bitvec, unsigned int off);
 void bitvec_swap(bitvec_t bitvec, unsigned int off);
 
+bitvec_t bitvec_resize(bitvec_t bitvec, unsigned int size);
+
 void bitvec_clear(bitvec_t bitvec);
 void bitvec_destroy(bitvec_t bitvec);
 

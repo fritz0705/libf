@@ -112,6 +112,31 @@ void bitvec_clear(bitvec_t bitvec)
 	libf_memset(bitvec->data, 0, bitvec->fields / 8);
 }
 
+bitvec_t bitvec_resize(bitvec_t bitvec, unsigned int size)
+{
+	if (size % 8 != 0)
+		size = size + 8 - (size % 8);
+
+	if (size == 0)
+	{
+		bitvec_destroy(bitvec);
+		return NULL;
+	}
+
+	char *new_mem = alloc(size / 8);
+	if (new_mem == NULL)
+		return NULL;
+	libf_memset(new_mem, 0, size / 8);
+
+	unsigned int copysize = ((size / 8) > (bitvec->fields / 8)) ? (bitvec->fields / 8) : (size / 8);
+	libf_memcpy(new_mem, bitvec->data, copysize);
+	unalloc(bitvec->data);
+	bitvec->data = new_mem;
+	bitvec->fields = size;
+
+	return bitvec;
+}
+
 void bitvec_destroy(bitvec_t bitvec)
 {
 	unalloc(bitvec->data);
