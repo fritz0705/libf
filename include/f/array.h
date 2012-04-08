@@ -30,6 +30,8 @@ void array_delete(array_t ary, int offset);
 void *array_get(array_t ary, int offset);
 int array_find(array_t ary, void *element);
 
+void *array_dump(array_t ary);
+
 void array_clean(array_t ary);
 void array_destroy(array_t ary);
 

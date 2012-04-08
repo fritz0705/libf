@@ -111,6 +111,7 @@ void array_clean(array_t ary)
 	}
 	
 	list_iterate_end(i);
+
 	list_clean(ary->elements);
 }
 
@@ -123,3 +124,23 @@ void array_destroy(array_t ary)
 	unalloc(ary);
 }
 
+void *array_dump(array_t ary)
+{
+	void *mem = alloc(ary->length * list_length(ary->elements));
+	if (mem == NULL)
+		return NULL;
+
+	list_iterator_t i = list_iterate(ary->elements);
+	int off = 0;
+	while (1)
+	{
+		char *elem = list_iterate_next(i);
+		if (elem == NULL)
+			break;
+		libf_memcpy(mem + off, elem, ary->length);
+		off += ary->length;
+	}
+	list_iterate_end(i);
+
+	return mem;
+}
