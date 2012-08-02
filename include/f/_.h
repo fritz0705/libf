@@ -42,6 +42,7 @@ typedef _Bool bool;
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #endif
 
 char *libf_version();
@@ -49,30 +50,46 @@ _Bool libf_freestanding();
 
 static inline void libf_memset(char *p, char val, unsigned int size)
 {
+#	if __STDC_HOSTED__ == 0
 	for (unsigned int i = 0; i < size; ++i)
 		p[i] = val;
+#	else
+	memset(p, val, size);
+#	endif
 }
 
 static inline void libf_memcpy(char *d, char *s, unsigned int size)
 {
+#	if __STDC_HOSTED__ == 0
 	for (unsigned int i = 0; i < size; ++i)
 		d[i] = s[i];
+#	else
+	memcpy(d, s, size);
+#	endif
 }
 
 static inline _Bool libf_memcmp(char *l, char *r, unsigned int len)
 {
+#	if __STDC_HOSTED__ == 0
 	for (unsigned int i = 0; i < len; ++i)
 		if (l[i] != r[i])
 			return 0;
 	return 1;
+#	else
+	return memcmp(l, r, len);
+#	endif
 }
 
 static inline unsigned int libf_strlen(char *s)
 {
+#	if __STDC_HOSTED__ == 0
 	unsigned int len = 0;
 	while (*s != '\0') {
 		++len;
 		++s;
 	}
 	return len;
+#	else
+	return strlen(s);
+#	endif
 }
