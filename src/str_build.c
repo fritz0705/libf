@@ -18,8 +18,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/str.h>
-#include "str.h"
 
 #include <stdlib.h>
 #include <stdarg.h>

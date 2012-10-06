@@ -18,22 +18,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/hash.h>
 #include <f/list.h>
 #include <f/alloc.h>
-
-struct hash_node
-{
-	fnv_t hash;
-	void *value;
-};
-
-struct hash
-{
-	list_t data;
-	unsigned int bits;
-};
 
 hash_t hash_new()
 {

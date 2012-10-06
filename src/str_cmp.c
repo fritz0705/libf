@@ -18,10 +18,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/str.h>
 #include <f/alloc.h>
-#include "str.h"
 
 /* Here we will compare the two strings `left` and `right` */
 _Bool str_cmp(str_t left, str_t right)

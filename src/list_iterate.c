@@ -18,18 +18,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/list.h>
 #include <f/alloc.h>
-
-#include "list.h"
-
-struct list_iterator
-{
-	struct list *list;
-	struct list_node *current;
-	unsigned int offset;
-};
 
 list_iterator_t list_iterate(list_t l)
 {

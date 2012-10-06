@@ -18,15 +18,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/array.h>
 #include <f/list.h>
 #include <f/alloc.h>
 #include <f/fnv.h>
-
-struct array {
-	size_t length;
-	list_t elements;
-};
 
 array_t array_new(size_t len)
 {

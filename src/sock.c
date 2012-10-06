@@ -477,6 +477,7 @@ char *sock_addr_dump(struct sockaddr *a)
 	return res_str;
 }
 
+/* TODO Rewrite this code without useless memory allocation */
 struct sockaddr *sock_addr_load(int family, char *str, int port)
 {
 	struct sockaddr *result = NULL;

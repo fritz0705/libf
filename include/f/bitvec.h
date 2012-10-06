@@ -19,8 +19,15 @@
  */
 
 #pragma once
-
 #include <f/_.h>
+
+#ifdef LIBF_INTERNAL
+struct bitvec
+{
+	unsigned int fields;
+	char *data;
+};
+#endif
 
 typedef struct bitvec *bitvec_t;
 

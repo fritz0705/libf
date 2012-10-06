@@ -19,8 +19,21 @@
  */
 
 #pragma once
-
 #include <f/fnv.h>
+
+#ifdef LIBF_INTERNAL
+struct hash_node
+{
+	fnv_t hash;
+	void *value;
+};
+
+struct hash
+{
+	list_t data;
+	unsigned int bits;
+};
+#endif
 
 typedef struct hash *hash_t;
 

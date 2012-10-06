@@ -18,15 +18,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/alloc.h>
 #include <f/bitvec.h>
-
-struct bitvec
-{
-	unsigned int fields;
-	char *data;
-};
 
 bitvec_t bitvec_new(unsigned int size)
 {

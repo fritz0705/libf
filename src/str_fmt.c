@@ -18,6 +18,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/str.h>
 #include <f/alloc.h>

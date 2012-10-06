@@ -20,6 +20,29 @@
 
 #pragma once
 
+#ifdef LIBF_INTERNAL
+struct list
+{
+	struct list_node *first_node;
+	struct list_node *last_node;
+};
+
+struct list_node
+{
+	struct list *list;
+	struct list_node *next;
+	struct list_node *prev;
+	void *data;
+};
+
+struct list_iterator
+{
+	struct list *list;
+	struct list_node *current;
+	unsigned int offset;
+};
+#endif
+
 typedef struct list *list_t;
 typedef struct list_iterator *list_iterator_t;
 

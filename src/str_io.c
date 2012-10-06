@@ -18,6 +18,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/str.h>
 #include <f/alloc.h>
@@ -25,7 +26,7 @@
 #include <unistd.h>
 #include <sys/uio.h>
 
-static char *newline = "\r\n";
+static char * const newline = "\r\n";
 
 str_t str_io_readline(int fd)
 {

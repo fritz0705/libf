@@ -18,7 +18,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#pragma once
 #include <f/_.h>
+
+#ifdef LIBF_INTERNAL
+#include <f/list.h>
+struct array {
+	size_t length;
+	list_t elements;
+};
+#endif
 
 typedef struct array *array_t;
 

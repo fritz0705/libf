@@ -18,6 +18,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#define LIBF_INTERNAL
 #include <f/_.h>
 #include <f/list.h>
 #include <f/alloc.h>
@@ -25,8 +26,6 @@
 #if __STDC_HOSTED__ == 1
 #include <stdarg.h>
 #endif
-
-#include "list.h"
 
 static inline int absoffset(list_t l, int offset)
 {
