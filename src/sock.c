@@ -331,7 +331,7 @@ void sock_addr_port(struct sockaddr *a, int port)
 
 uint32_t sock_if(char *name)
 {
-#ifdef IFNAMSIZ
+#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -351,7 +351,7 @@ uint32_t sock_if(char *name)
 
 char *sock_if_name(uint32_t index)
 {
-#ifdef IFNAMSIZ
+#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -376,7 +376,7 @@ char *sock_if_name(uint32_t index)
 
 int sock_if_mtu(char *name)
 {
-#ifdef IFNAMSIZ
+#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -396,7 +396,7 @@ int sock_if_mtu(char *name)
 
 short sock_if_flags(char *name)
 {
-#ifdef IFNAMSIZ
+#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
