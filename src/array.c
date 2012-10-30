@@ -133,7 +133,7 @@ void *array_dump(array_t ary)
 		char *elem = list_iterate_next(i);
 		if (elem == NULL)
 			break;
-		libf_memcpy(mem + off, elem, ary->length);
+		libf_memcpy((char*)mem + off, elem, ary->length);
 		off += ary->length;
 	}
 	list_iterate_end(i);
