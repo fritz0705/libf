@@ -382,8 +382,8 @@ str_t str_append_i(str_t str, int num, unsigned int base)
 		negative = 1;
 		num = -num;
 	}
-	char buffer[__SIZEOF_INT__ * 8 + 1];
-	char *res = buffer + __SIZEOF_INT__ * 8;
+	char buffer[sizeof(int) * 8 + 1];
+	char *res = buffer + sizeof(int) * 8;
 
 	*res = 0;
 	--res;
@@ -408,8 +408,8 @@ str_t str_append_ui(str_t str, unsigned int num, unsigned int base)
 	if (num == 0)
 		return str_append_c(str, '0');
 
-	char buffer[__SIZEOF_INT__ * 8 + 1];
-	char *res = buffer + __SIZEOF_INT__ * 8;
+	char buffer[sizeof(int) * 8 + 1];
+	char *res = buffer + sizeof(int) * 8;
 
 	*res = 0;
 	--res;

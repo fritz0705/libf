@@ -329,9 +329,11 @@ void sock_addr_port(struct sockaddr *a, int port)
 	}
 }
 
+#define IS_BSD defined(__FreeBSD__) || defined(__OpenBSD__)
+
 uint32_t sock_if(char *name)
 {
-#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
+#if defined(IFNAMSIZ) && !IS_BSD
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -351,7 +353,7 @@ uint32_t sock_if(char *name)
 
 char *sock_if_name(uint32_t index)
 {
-#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
+#if defined(IFNAMSIZ) && !IS_BSD
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -376,7 +378,7 @@ char *sock_if_name(uint32_t index)
 
 int sock_if_mtu(char *name)
 {
-#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
+#if defined(IFNAMSIZ) && !IS_BSD
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -396,7 +398,7 @@ int sock_if_mtu(char *name)
 
 short sock_if_flags(char *name)
 {
-#if defined(IFNAMSIZ) && !defined(__FreeBSD__)
+#if defined(IFNAMSIZ) && !IS_BSD
 	if (ioctl_sock == -1)
 		ioctl_sock = sock_ipv4();
 	if (ioctl_sock == -1)
@@ -413,6 +415,8 @@ short sock_if_flags(char *name)
 	return 0;
 #endif
 }
+
+#undef IS_BSD
 
 char *sock_addr_dump(struct sockaddr *a)
 {
