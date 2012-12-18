@@ -59,7 +59,7 @@ libf.a: $(objects)
 
 clean:
 	rm -f libf.so libf.a
-	find src/ -name '*.o' -delete
+	find src/ -name '*.o' -exec $(RM) {} \;
 
 install: libf.so libf.a
 	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/
