@@ -20,56 +20,86 @@
 
 #pragma once
 
-#ifdef LIBF_INTERNAL
-struct list
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#ifndef F_LIST_H_
+#define F_LIST_H_
+
+typedef struct F_list *F_list_t;
+typedef struct F_list_node *F_list_node_t;
+
+#ifdef F_LIST_STRUCTS
+struct F_list_node
 {
-	struct list_node *first_node;
-	struct list_node *last_node;
+	F_list_node_t next;
+	F_list_node_t prev;
+	F_list_node_t lstub;
+	bool stub:1;
+	uintptr_t data;
 };
 
-struct list_node
+struct F_list
 {
-	struct list *list;
-	struct list_node *next;
-	struct list_node *prev;
-	void *data;
-};
-
-struct list_iterator
-{
-	struct list *list;
-	struct list_node *current;
-	unsigned int offset;
+	struct F_list_node stub;
 };
 #endif
 
-typedef struct list *list_t;
-typedef struct list_iterator *list_iterator_t;
+F_list_t F_list_create();
 
-list_t list_new ();
-list_t list_build(void *v, ...);
+F_list_node_t F_list_head(F_list_t l);
+F_list_node_t F_list_tail(F_list_t l);
 
-void *list_append (list_t l, void *data);
-void *list_prepend (list_t l, void *data);
-void *list_insert (list_t l, void *data, int offset);
+F_list_node_t F_list_next(F_list_node_t l);
+F_list_node_t F_list_prev(F_list_node_t l);
 
-void *list_get (list_t l, int offset);
-int list_find (list_t l, void *data);
+F_list_node_t F_list_insert_after(F_list_node_t n, uintptr_t data);
+F_list_node_t F_list_insert_before(F_list_node_t n, uintptr_t data);
 
-void *list_delete (list_t l, int offset);
+F_list_node_t F_list_replace(F_list_node_t n, uintptr_t data);
 
-/* The difference between list_destroy and list_clean is simple:
- * list_clean will only remove the list nodes, while list_destroy
- * will also destroy the internal list structure. So you should only
- * use list_destroy if you will never use the list again.
- */
-void list_destroy (list_t l);
-void list_clean (list_t l);
+F_list_node_t F_list_append(F_list_t l, uintptr_t data);
+F_list_node_t F_list_prepend(F_list_t l, uintptr_t data);
 
-int list_length (list_t l);
+F_list_t F_list_get_list(F_list_node_t n);
 
-/* The wonderful new iterator structure */
-list_iterator_t list_iterate(list_t l);
-unsigned int list_iterate_offset(list_iterator_t i);
-void *list_iterate_next(list_iterator_t i);
-void list_iterate_end(list_iterator_t i);
+const uintptr_t *F_list_data(F_list_node_t n);
+
+bool F_list_remove(F_list_node_t n);
+
+bool F_list_is_stub(F_list_node_t n);
+
+void F_list_destroy(F_list_t l);
+
+#define F_LIST_FOR_EACH(l, n) \
+	for (F_list_node_t n = F_list_next(F_list_head(l));\
+			!F_list_is_stub(n); n = F_list_next(n))
+
+#define F_LIST_FOR_EACH_R(l, n) \
+	for (F_list_node_t n = F_list_prev(F_list_head(l));\
+			!F_list_is_stub(n); n = F_list_prev(n))
+
+#define F_list_push(l, v) F_list_append(l, v)
+#define F_list_dequeue(l) F_list_pop(l)
+#define F_list_enqueue(l, v) F_list_prepend(l, v)
+
+#define F_list_value(t, n) ((t)F_list_data(n))
+
+static inline const uintptr_t *F_list_pop(F_list_t l)
+{
+	F_list_node_t last = F_list_prev(F_list_tail(l));
+	if (F_list_is_stub(last))
+		return NULL;
+	const uintptr_t *data = F_list_data(last);
+	F_list_remove(last);
+	return data;
+}
+
+#ifdef F_LIST_INLINE
+#undef F_LIST_INLINE
+#include "list.c"
+#endif
+
+#endif
+

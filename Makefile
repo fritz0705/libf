@@ -28,17 +28,9 @@ endif
 
 objects :=
 
-objects += src/libf.o
-objects += src/list.o src/list_iterate.o
-objects += src/hash.o
-objects += src/fnv.o
-objects += src/fnv_str.o src/str.o src/str_cmp.o
-objects += src/alloc.o
-objects += src/bitvec.o
-objects += src/array.o
+objects += src/list.o
+objects += src/dict.o
 ifeq ($(ENV),hosted)
-objects += src/str_fmt.o src/str_io.o src/str_build.o
-objects += src/sock.o
 endif
 
 tags:
@@ -55,7 +47,7 @@ libf.a: $(objects)
 	$(AR) rs $@ $^
 
 %.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $^
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f libf.so libf.a
@@ -64,3 +56,7 @@ clean:
 install: libf.so libf.a
 	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/
 	cp -r include/./ $(DESTDIR)$(PREFIX)/include/
+
+src/list.o: include/f/list.h
+src/dict.o: include/f/dict.h include/f/list.h
+

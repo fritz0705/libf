@@ -18,217 +18,131 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#define LIBF_INTERNAL
-#include <f/_.h>
+#define F_LIST_STRUCTS
+
 #include <f/list.h>
-#include <f/alloc.h>
 
-#if __STDC_HOSTED__ == 1
-#include <stdarg.h>
-#endif
-
-static inline int absoffset(list_t l, int offset)
+F_list_t F_list_create()
 {
-	if (offset < 0)
-		return list_length(l) + offset;
-	return offset;
-}
-
-static inline struct list_node *get_node(list_t l, int offset)
-{
-	struct list_node *node = l->first_node;
-	for (int i = 0; node != NULL && i < offset; ++i)
-		node = node->next;
-
-	return node;
-}
-
-list_t list_new()
-{
-	list_t list = alloc(sizeof(struct list));
-	if (list == NULL)
+	F_list_t l = malloc(sizeof *l);
+	if (!l)
 		return NULL;
 
-	list->first_node = NULL;
-	list->last_node = NULL;
+	l->stub = (struct F_list_node){
+		.next = &l->stub,
+		.prev = &l->stub,
+		.lstub = &l->stub,
+		.stub = true,
+		.data = (uintptr_t)l
+	};
 
-	return list;
+	return l;
 }
 
-void *list_append(list_t l, void *data)
+F_list_node_t F_list_head(F_list_t l)
 {
-	struct list_node *node = alloc(sizeof(struct list_node));
-
-	node->data = data;
-	node->list = l;
-	node->next = NULL;
-	node->prev = NULL;
-
-	if (l->first_node == NULL)
-	{
-		l->first_node = node;
-		l->last_node = node;
-
-		return data;
-	}
-
-	node->prev = l->last_node;
-	l->last_node->next = node;
-	l->last_node = node;
-
-	return data;
+	return &l->stub;
 }
 
-void *list_prepend(list_t l, void *data)
+F_list_node_t F_list_tail(F_list_t l)
 {
-	struct list_node *node = alloc(sizeof(struct list_node));
-
-	node->data = data;
-	node->list = l;
-	node->next = NULL;
-	node->prev = NULL;
-
-	if (l->last_node == NULL)
-	{
-		l->first_node = node;
-		l->last_node = node;
-
-		return data;
-	}
-
-	node->next = l->first_node;
-	l->first_node->prev = node;
-	l->first_node = node;
-
-	return data;
+	return &l->stub;
 }
 
-void *list_insert(list_t l, void *data, int offset)
+F_list_node_t F_list_next(F_list_node_t l)
 {
-	offset = absoffset(l, offset);
-
-	struct list_node *next_node = get_node(l, offset);
-	if (next_node == NULL)
-		return NULL;
-
-	struct list_node *prev_node = next_node->prev;
-
-	struct list_node *node = alloc(sizeof(struct list_node));
-
-	node->data = data;
-	node->list = l;
-
-	node->next = next_node;
-	node->prev = prev_node;
-
-	next_node->prev = node;
-	if (prev_node == NULL)
-		l->first_node = node;
-	else
-		prev_node->next = node;
-
-	return data;
+	return l->next;
 }
 
-void *list_get(list_t l, int offset)
+F_list_node_t F_list_prev(F_list_node_t l)
 {
-	offset = absoffset(l, offset);
-
-	return get_node(l, offset)->data;
+	return l->prev;
 }
 
-int list_find(list_t l, void *data)
+F_list_node_t F_list_insert_after(F_list_node_t n, uintptr_t data)
 {
-	struct list_node *node = l->first_node;
-	int i;
-	for (i = 0; node != NULL && node->data != data; ++i)
-		node = node->next;
+	/* Allocate new list node */
+	F_list_node_t new_n = malloc(sizeof *new_n);
+	/* Fill new list node with parameters */
+	*new_n = (struct F_list_node){
+		.next = n->next,
+		.prev = n,
+		.lstub = n->lstub,
+		.stub = false,
+		.data = data
+	};
 
-	if (node == NULL)
-		return -1;
+	n->next->prev = new_n;
+	n->next = new_n;
 
-	return i;
+	return new_n;
 }
 
-void *list_delete(list_t l, int offset)
+F_list_node_t list_insert_before(F_list_node_t n, uintptr_t data)
 {
-	offset = absoffset(l, offset);
+	/* Allocate new list node */
+	F_list_node_t new_n = malloc(sizeof *new_n);
+	/* Fill new list node with parameters */
+	*new_n = (struct F_list_node){
+		.next = n,
+		.prev = n->prev,
+		.lstub = n->lstub,
+		.stub = false,
+		.data = data
+	};
 
-	struct list_node *node = get_node(l, offset);
-	if (node == NULL)
-		return NULL;
+	n->prev->next = new_n;
+	n->prev = new_n;
 
-	if (node->prev != NULL)
-		node->prev->next = node->next;
-	else
-		l->first_node = node->next;
-
-	if (node->next != NULL)
-		node->next->prev = node->prev;
-	else
-		l->last_node = node->prev;
-
-	void *ret = node->data;
-	unalloc(node);
-
-	return ret;
+	return new_n;
 }
 
-void list_clean(list_t l)
+F_list_node_t F_list_replace(F_list_node_t n, uintptr_t data)
 {
-	struct list_node *node = l->first_node;
-	while (node != NULL)
-	{
-		struct list_node *next = node->next;
-		unalloc(node);
-		node = next;
-	}
-
-	l->first_node = NULL;
-	l->last_node = NULL;
+	n->data = data;
+	return n;
 }
 
-void list_destroy(list_t l)
+const uintptr_t *F_list_data(F_list_node_t n)
 {
-	list_clean(l);
-	unalloc(l);
+	return &n->data;
 }
 
-int list_length(list_t l)
+bool F_list_remove(F_list_node_t n)
 {
-	struct list_node *node = l->first_node;
-	unsigned int length = 0;
-	while (node != NULL)
-	{
-		++length;
-		node = node->next;
-	}
+	if (n->stub)
+		return false;
 
-	return length;
+	n->next->prev = n->prev;
+	n->prev->next = n->next;
+
+	free(n);
+
+	return true;
 }
 
-#if __STDC_HOSTED__ == 1
-list_t list_build(void *v, ...)
+bool F_list_is_stub(F_list_node_t n)
 {
-	list_t list = list_new();
-	if (list == NULL)
-		return NULL;
-
-	list_append(list, v);
-	va_list ap;
-	va_start(ap, v);
-
-	while (1)
-	{
-		void *e = va_arg(ap, void *);
-		if (e == NULL)
-			break;
-
-		list_append(list, e);
-	}
-
-	va_end(ap);
-
-	return list;
+	return n->stub;
 }
-#endif
+
+void F_list_destroy(F_list_t l)
+{
+	(void)l;
+}
+
+F_list_t F_list_get_list(F_list_node_t n)
+{
+	return (F_list_t)n->lstub->data;
+}
+
+F_list_node_t F_list_append(F_list_t l, uintptr_t data)
+{
+	return list_insert_before(&l->stub, data);
+}
+
+F_list_node_t F_list_prepend(F_list_t l, uintptr_t data)
+{
+	return F_list_insert_after(&l->stub, data);
+}
+
