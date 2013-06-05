@@ -20,7 +20,7 @@
 
 #include "../list.h"
 
-F_list_node_t list_insert_before(F_list_node_t n, uintptr_t data)
+F_list_node_t F_list_insert_before(F_list_node_t n, uintptr_t data)
 {
 	/* Allocate new list node */
 	F_list_node_t new_n = malloc(sizeof *new_n);

@@ -29,7 +29,7 @@ void F_dict_destroy(F_dict_t d)
 		if (bucket->burst)
 		{
 			F_LIST_FOR_EACH(bucket->burst, node)
-				free((void *)node);
+				free((void *)F_list_value(void *, node));
 			F_list_destroy(bucket->burst);
 		}
 	}
