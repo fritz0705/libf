@@ -184,7 +184,131 @@ bool F_dict_delete(F_dict_t d, uint32_t hash)
 	return true;
 }
 
-void F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen)
+size_t F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen)
 {
+	size_t max = dstlen / sizeof *dst;
+	size_t written = 0;
+
+	if (max == 0)
+		return 0;
+
+	for (size_t bucket_off = 0; bucket_off < d->buckets_cnt; ++bucket_off)
+	{
+		struct F_dict_bucket *bucket = &d->buckets[bucket_off];
+
+		for (size_t slot_off = 0; slot_off < F_DICT_SLOTS_COUNT; ++slot_off)
+			if (bucket->smask & (1 << slot_off))
+			{
+				if (written == max)
+					goto no_space;
+				dst[written++] = bucket->slots[slot_off].hash;
+			}
+
+		if (!bucket->burst)
+			continue;
+		F_LIST_FOR_EACH(bucket->burst, node)
+		{
+			struct F_dict_entry *e = F_list_value(struct F_dict_entry *, node);
+			if (written == max)
+				goto no_space;
+			dst[written++] = e->hash;
+		}
+	}
+
+no_space:
+	return written;
+}
+
+size_t F_dict_values(F_dict_t d, uintptr_t *dst, size_t dstlen)
+{
+	size_t max = dstlen / sizeof *dst;
+	size_t written = 0;
+
+	if (max == 0)
+		return 0;
+
+	for (size_t bucket_off = 0; bucket_off < d->buckets_cnt; ++bucket_off)
+	{
+		struct F_dict_bucket *bucket = &d->buckets[bucket_off];
+
+		for (size_t slot_off = 0; slot_off < F_DICT_SLOTS_COUNT; ++slot_off)
+			if (bucket->smask & (1 << slot_off))
+			{
+				if (written == max)
+					goto no_space;
+				dst[written++] = bucket->slots[slot_off].data;
+			}
+
+		if (!bucket->burst)
+			continue;
+		F_LIST_FOR_EACH(bucket->burst, node)
+		{
+			struct F_dict_entry *e = F_list_value(struct F_dict_entry *, node);
+			if (written == max)
+				goto no_space;
+			dst[written++] = e->data;
+		}
+	}
+
+no_space:
+	return written;
+}
+
+size_t F_dict_entries(F_dict_t d, F_dict_entry_t *dst, size_t dstlen)
+{
+	size_t max = dstlen / sizeof *dst;
+	size_t written = 0;
+
+	if (max == 0)
+		return 0;
+
+	for (size_t bucket_off = 0; bucket_off < d->buckets_cnt; ++bucket_off)
+	{
+		struct F_dict_bucket *bucket = &d->buckets[bucket_off];
+
+		for (size_t slot_off = 0; slot_off < F_DICT_SLOTS_COUNT; ++slot_off)
+			if (bucket->smask & (1 << slot_off))
+			{
+				if (written == max)
+					goto no_space;
+				dst[written++] = &bucket->slots[slot_off];
+			}
+
+		if (!bucket->burst)
+			continue;
+		F_LIST_FOR_EACH(bucket->burst, node)
+		{
+			struct F_dict_entry *e = F_list_value(struct F_dict_entry *, node);
+			if (written == max)
+				goto no_space;
+			dst[written++] = e;
+		}
+	}
+
+no_space:
+	return written;
+}
+
+size_t F_dict_length(F_dict_t d)
+{
+	size_t len = 0;
+
+	for (size_t bucket_off = 0; bucket_off < d->buckets_cnt; ++bucket_off)
+	{
+		struct F_dict_bucket *bucket = &d->buckets[bucket_off];
+
+		for (size_t slot_off = 0; slot_off < F_DICT_SLOTS_COUNT; ++slot_off)
+			if (bucket->smask & (1 << slot_off))
+				++len;
+
+		if (!bucket->burst)
+			continue;
+		F_LIST_FOR_EACH(bucket->burst, node)
+		{
+			++len;
+		}
+	}
+
+	return len;
 }
 

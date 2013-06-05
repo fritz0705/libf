@@ -65,6 +65,17 @@ static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
 	return hash;
 }
 
+static inline uint32_t F_dict_fnv32_s(char *str)
+{
+	uint32_t hash = 2166136261U;
+	while (*str)
+	{
+		hash *= 16777619U;
+		hash ^= *str++;
+	}
+	return hash;
+}
+
 typedef struct F_dict *F_dict_t;
 typedef struct F_dict_entry *F_dict_entry_t;
 
@@ -89,7 +100,7 @@ const uintptr_t *F_dict_set(F_dict_t d, uint32_t hash, uintptr_t val);
 
 size_t F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen);
 size_t F_dict_values(F_dict_t d, uintptr_t *dst, size_t dstlen);
-size_t F_dict_entries(F_dict_t d, F_dict_entry_t dst, size_t dstlen);
+size_t F_dict_entries(F_dict_t d, F_dict_entry_t *dst, size_t dstlen);
 
 size_t F_dict_length(F_dict_t d);
 
@@ -103,9 +114,9 @@ bool F_dict_delete(F_dict_t d, uint32_t hash);
 	(F_dict_delete(d, F_dict_fnv32((unsigned char *)(o), s)))
 
 #define F_dict_set_s(d, s, v) \
-	(F_dict_set(d, F_dict_fnv32((unsigned char *)(s), strlen(s)), v))
+	(F_dict_set(d, F_dict_fnv32_s(s), v))
 #define F_dict_lookup_s(d, s) \
-	(F_dict_lookup(d, F_dict_fnv32((unsigned char *)(s), strlen(s))))
+	(F_dict_lookup(d, F_dict_fnv32_s(s)))
 
 #define F_dict_contains(d, h) (F_dict_lookup(d, h) != NULL)
 
