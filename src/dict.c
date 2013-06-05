@@ -64,6 +64,9 @@ const uintptr_t *F_dict_lookup(F_dict_t d, uint32_t hash)
 	struct F_dict_entry *entry = NULL;
 	if (bucket->smask & (1 << slot))
 		entry = &bucket->slots[slot];
+	else
+		return NULL;
+
 	if (entry->hash != hash)
 	{
 		if (!bucket->burst)

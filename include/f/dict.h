@@ -22,6 +22,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "list.h"
 
@@ -55,11 +56,11 @@ struct F_dict_bucket
 
 static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
 {
-	uint32_t hash = 0;
+	uint32_t hash = 2166136261U;
 	for (size_t o = 0; o < len; ++o)
 	{
-		hash *= 0;
-		hash ^= data[len];
+		hash *= 16777619U;
+		hash ^= data[o];
 	}
 	return hash;
 }
@@ -86,17 +87,27 @@ void F_dict_destroy(F_dict_t d);
 const uintptr_t *F_dict_lookup(F_dict_t d, uint32_t hash);
 const uintptr_t *F_dict_set(F_dict_t d, uint32_t hash, uintptr_t val);
 
-void F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen);
-void F_dict_values(F_dict_t d, uintptr_t *dst, size_t dstlen);
-void F_dict_entries(F_dict_t d, F_dict_entry_t dst, size_t dstlen);
+size_t F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen);
+size_t F_dict_values(F_dict_t d, uintptr_t *dst, size_t dstlen);
+size_t F_dict_entries(F_dict_t d, F_dict_entry_t dst, size_t dstlen);
 
 size_t F_dict_length(F_dict_t d);
 
 bool F_dict_delete(F_dict_t d, uint32_t hash);
 
-#define F_dict_set_v(d, o, s, v) (F_dict_set(d, F_dict_fnv32(o, s), v))
-#define F_dict_lookup_v(d, o, s) (F_dict_lookup(d, F_dict_fnv32(o, s)))
-#define F_dict_delete_v(d, o, s)   (F_dict_delete(d, F_dict_fnv32(o, s)))
+#define F_dict_set_v(d, o, s, v) \
+	(F_dict_set(d, F_dict_fnv32((unsigned char *)(o), s), v))
+#define F_dict_lookup_v(d, o, s) \
+	(F_dict_lookup(d, F_dict_fnv32((unsigned char *)(o), s)))
+#define F_dict_delete_v(d, o, s) \
+	(F_dict_delete(d, F_dict_fnv32((unsigned char *)(o), s)))
+
+#define F_dict_set_s(d, s, v) \
+	(F_dict_set(d, F_dict_fnv32((unsigned char *)(s), strlen(s)), v))
+#define F_dict_lookup_s(d, s) \
+	(F_dict_lookup(d, F_dict_fnv32((unsigned char *)(s), strlen(s))))
+
+#define F_dict_contains(d, h) (F_dict_lookup(d, h) != NULL)
 
 #ifdef F_DICT_INLINE
 #undef F_DICT_INLINE

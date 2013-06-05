@@ -30,7 +30,7 @@
 typedef struct F_list *F_list_t;
 typedef struct F_list_node *F_list_node_t;
 
-#ifdef F_LIST_STRUCTS
+#if defined(F_LIST_STRUCTS) || defined(F_LIST_INLINE)
 struct F_list_node
 {
 	F_list_node_t next;
