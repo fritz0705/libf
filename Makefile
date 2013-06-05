@@ -3,17 +3,14 @@ LD := $(CC)
 AR := $(CROSS)ar
 CTAGS := $(CROSS)ctags
 
-ENV:=hosted
+VERSION :=\"1.0-dev\"
 
-VERSION :=\"0.4-dev\"
-
-override CFLAGS := -fPIC -Wall -Wextra -Wno-unused-parameter -std=gnu99 -g -O2 $(CFLAGS)
+override CFLAGS := -fPIC -Wall -Wextra -pedantic -std=gnu11 -O3 $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
-ifeq ($(ENV),freestanding)
-override CFLAGS += -ffreestanding -nostdinc
-override LDFLAGS += -nostdlib
+ifeq ($(DEBUG),1)
+override CFLAGS += -O0 -g
 endif
 
 DESTDIR :=/
@@ -21,17 +18,10 @@ PREFIX :=/usr/local
 
 .PHONY: all clean install tags static shared
 
-all: static
-ifeq ($(ENV),hosted)
-all: shared
-endif
+all: static shared
 
-objects :=
-
-objects += src/list.o
-objects += src/dict.o
-ifeq ($(ENV),hosted)
-endif
+SRCS = $(sort $(wildcard src/*/*.c))
+OBJS = $(SRCS:.c=.o)
 
 tags:
 	$(CTAGS) -R
@@ -40,23 +30,21 @@ static: libf.a
 
 shared: libf.so
 
-libf.so: $(objects)
+libf.so: $(OBJS)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
 
-libf.a: $(objects)
+libf.a: $(OBJS)
 	$(AR) rs $@ $^
 
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f libf.so libf.a
-	find src/ -name '*.o' -exec $(RM) {} \;
+	$(RM) libf.so
+	$(RM) libf.a
+	find src/ -name '*.o' -delete
 
 install: libf.so libf.a
 	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/
 	cp -r include/./ $(DESTDIR)$(PREFIX)/include/
-
-src/list.o: include/f/list.h
-src/dict.o: include/f/dict.h include/f/list.h
 

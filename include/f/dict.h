@@ -117,6 +117,8 @@ bool F_dict_delete(F_dict_t d, uint32_t hash);
 	(F_dict_set(d, F_dict_fnv32_s(s), v))
 #define F_dict_lookup_s(d, s) \
 	(F_dict_lookup(d, F_dict_fnv32_s(s)))
+#define F_dict_delete_s(d, s) \
+	(F_dict_delete(d, F_dict_fnv32_s(s)))
 
 #define F_dict_contains(d, h) (F_dict_lookup(d, h) != NULL)
 
