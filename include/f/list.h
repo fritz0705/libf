@@ -64,7 +64,7 @@ F_list_node_t F_list_prepend(F_list_t l, uintptr_t data);
 
 F_list_t F_list_get_list(F_list_node_t n);
 
-const uintptr_t *F_list_data(F_list_node_t n);
+uintptr_t F_list_data(F_list_node_t n);
 
 bool F_list_remove(F_list_node_t n);
 
@@ -84,14 +84,14 @@ void F_list_destroy(F_list_t l);
 #define F_list_dequeue(l) F_list_pop(l)
 #define F_list_enqueue(l, v) F_list_prepend(l, v)
 
-#define F_list_value(t, n) ((t)F_list_data(n))
+#define F_list_value(t, n) ((t)(F_list_data(n)))
 
-static inline const uintptr_t *F_list_pop(F_list_t l)
+static inline uintptr_t F_list_pop(F_list_t l)
 {
 	F_list_node_t last = F_list_prev(F_list_tail(l));
 	if (F_list_is_stub(last))
-		return NULL;
-	const uintptr_t *data = F_list_data(last);
+		return 0;
+	uintptr_t data = F_list_data(last);
 	F_list_remove(last);
 	return data;
 }

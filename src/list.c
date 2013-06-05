@@ -103,9 +103,9 @@ F_list_node_t F_list_replace(F_list_node_t n, uintptr_t data)
 	return n;
 }
 
-const uintptr_t *F_list_data(F_list_node_t n)
+uintptr_t F_list_data(F_list_node_t n)
 {
-	return &n->data;
+	return n->data;
 }
 
 bool F_list_remove(F_list_node_t n)

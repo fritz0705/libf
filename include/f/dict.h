@@ -72,6 +72,9 @@ typedef struct F_dict_entry *F_dict_entry_t;
 #define F_DICT_3 31
 #define F_DICT_4 127
 #define F_DICT_5 8191
+#define F_DICT_6 16381
+#define F_DICT_7 32749
+#define F_DICT_8 65521
 
 F_dict_t F_dict_create(uint_least16_t buckets);
 

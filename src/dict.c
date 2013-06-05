@@ -69,10 +69,11 @@ const uintptr_t *F_dict_lookup(F_dict_t d, uint32_t hash)
 		if (!bucket->burst)
 			return NULL;
 		entry = NULL;
-		F_LIST_FOR_EACH(bucket->burst, e)
+		F_LIST_FOR_EACH(bucket->burst, node)
 		{
-			if (F_list_value(struct F_dict_entry *, e)->hash == hash)
-				entry = F_list_value(struct F_dict_entry *, e);
+			F_dict_entry_t e = F_list_value(F_dict_entry_t, node);
+			if (e->hash == hash)
+				entry = e;
 		}
 	}
 
