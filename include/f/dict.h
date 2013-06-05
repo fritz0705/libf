@@ -59,8 +59,8 @@ static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
 	uint32_t hash = 2166136261U;
 	for (size_t o = 0; o < len; ++o)
 	{
-		hash *= 16777619U;
 		hash ^= data[o];
+		hash *= 16777619U;
 	}
 	return hash;
 }
@@ -70,8 +70,8 @@ static inline uint32_t F_dict_fnv32_s(char *str)
 	uint32_t hash = 2166136261U;
 	while (*str)
 	{
-		hash *= 16777619U;
 		hash ^= *str++;
+		hash *= 16777619U;
 	}
 	return hash;
 }
