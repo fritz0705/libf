@@ -147,6 +147,37 @@ F_dict_t F_dict_resize(F_dict_t dict, uint_least16_t buckets)
 
 		dict->buckets_cnt = buckets;
 	}
+	else
+	{
+		/* Shrink dictionary */
+		F_dict_t new_dict = F_dict_create(buckets);
+
+		for (size_t bucket_off = 0; bucket_off < dict->buckets_cnt; ++bucket_off)
+		{
+			struct F_dict_bucket *bucket = &dict->buckets[bucket_off];
+
+			for (size_t slot = 0; slot < F_DICT_SLOTS_COUNT; ++slot)
+			{
+				if (!(bucket->smask & (1 << slot)))
+					continue;
+
+				struct F_dict_entry *entry = &bucket->slots[slot];
+				F_dict_set(new_dict, entry->hash, entry->data);
+			}
+
+			if (bucket->burst)
+			{
+				F_LIST_FOR_EACH(bucket->burst, node)
+				{
+					struct F_dict_entry *entry = F_list_value(struct F_dict_entry *, node);
+					F_dict_set(new_dict, entry->hash, entry->data);
+				}
+			}
+		}
+
+		F_dict_destroy(dict);
+		dict = new_dict;
+	}
 
 	return dict;
 }
