@@ -50,7 +50,7 @@ F_dict_t F_dict_resize(F_dict_t dict, uint_least16_t buckets)
 
 				uint32_t new_bucket_off = entry->hash % buckets;
 
-				if (new_bucket_off < dict->buckets_cnt)
+				if (new_bucket_off < dict->buckets_cnt && new_bucket_off >= bucket_off)
 				{
 					struct F_dict_entry *tmp_entry = malloc(sizeof *tmp_entry);
 					*tmp_entry = *entry;
