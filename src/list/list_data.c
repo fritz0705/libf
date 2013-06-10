@@ -20,8 +20,10 @@
 
 #include "../list.h"
 
+#if 0
 uintptr_t F_list_data(F_list_node_t n)
 {
 	return n->data;
 }
+#endif
 

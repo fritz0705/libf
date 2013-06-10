@@ -20,8 +20,9 @@
 
 #include "../list.h"
 
+#if 0
 bool F_list_is_stub(F_list_node_t n)
 {
 	return n->stub;
 }
-
+#endif

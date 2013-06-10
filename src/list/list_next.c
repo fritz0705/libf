@@ -20,8 +20,10 @@
 
 #include "../list.h"
 
+#if 0
 F_list_node_t F_list_next(F_list_node_t l)
 {
 	return l->next;
 }
+#endif
 

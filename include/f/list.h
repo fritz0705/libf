@@ -30,29 +30,33 @@
 typedef struct F_list *F_list_t;
 typedef struct F_list_node *F_list_node_t;
 
-#if defined(F_LIST_STRUCTS) || defined(F_LIST_INLINE)
 struct F_list_node
 {
+	uintptr_t data;
 	F_list_node_t next;
 	F_list_node_t prev;
 	F_list_node_t lstub;
 	bool stub:1;
-	uintptr_t data;
-};
+} __attribute__((packed));
 
 struct F_list
 {
 	struct F_list_node stub;
 };
-#endif
 
 F_list_t F_list_create();
 
 F_list_node_t F_list_head(F_list_t l);
 F_list_node_t F_list_tail(F_list_t l);
 
-F_list_node_t F_list_next(F_list_node_t l);
-F_list_node_t F_list_prev(F_list_node_t l);
+static inline F_list_node_t F_list_next(F_list_node_t l)
+{
+	return l->next;
+}
+static inline F_list_node_t F_list_prev(F_list_node_t l)
+{
+	return l->prev;
+}
 
 F_list_node_t F_list_insert_after(F_list_node_t n, uintptr_t data);
 F_list_node_t F_list_insert_before(F_list_node_t n, uintptr_t data);
@@ -64,11 +68,17 @@ F_list_node_t F_list_prepend(F_list_t l, uintptr_t data);
 
 F_list_t F_list_get_list(F_list_node_t n);
 
-uintptr_t F_list_data(F_list_node_t n);
+static inline uintptr_t F_list_data(F_list_node_t n)
+{
+	return n->data;
+}
 
 bool F_list_remove(F_list_node_t n);
 
-bool F_list_is_stub(F_list_node_t n);
+static inline bool F_list_is_stub(F_list_node_t n)
+{
+	return n->stub;
+}
 
 void F_list_destroy(F_list_t l);
 
@@ -95,11 +105,6 @@ static inline uintptr_t F_list_pop(F_list_t l)
 	F_list_remove(last);
 	return data;
 }
-
-#ifdef F_LIST_INLINE
-#undef F_LIST_INLINE
-#include "list.c"
-#endif
 
 #endif
 

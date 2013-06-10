@@ -20,8 +20,10 @@
 
 #include "../list.h"
 
+#if 0
 F_list_node_t F_list_prev(F_list_node_t l)
 {
 	return l->prev;
 }
+#endif
 
