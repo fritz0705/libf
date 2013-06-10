@@ -46,8 +46,12 @@ struct F_list
 
 F_list_t F_list_create();
 
-F_list_node_t F_list_head(F_list_t l);
-F_list_node_t F_list_tail(F_list_t l);
+static inline F_list_node_t F_list_head(F_list_t l)
+{
+	return &l->stub;
+}
+
+static F_list_node_t (*F_list_tail)(F_list_t) = F_list_head;
 
 static inline F_list_node_t F_list_next(F_list_node_t l)
 {

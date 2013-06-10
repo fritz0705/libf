@@ -1,11 +1,22 @@
-CC := $(CROSS)gcc
+ifeq ($(CC),cc)
+ifneq ($(shell which clang),)
+HAS_CLANG=yes
+CC := clang
+else
+CC := gcc
+endif
+endif
+
+ifeq ($(LD),ld)
 LD := $(CC)
-AR := $(CROSS)ar
-CTAGS := $(CROSS)ctags
+endif
+
+AR ?= ar
 
 VERSION :=\"1.0-dev\"
 
-override CFLAGS := -fPIC -Wall -Wextra -pedantic -std=gnu11 -O3 $(CFLAGS)
+override CFLAGS := -fPIC -Wall -Wextra -pedantic -std=c99\
+	-O$(if $(OPTIMIZATION),$(OPTIMIZATION),3) $(CFLAGS)
 override CPPFLAGS := -I ./include -DVERSION=$(VERSION) $(CPPFLAGS)
 override LDFLAGS := $(LDFLAGS)
 
@@ -23,9 +34,6 @@ all: static shared
 SRCS = $(sort $(wildcard src/*/*.c))
 OBJS = $(SRCS:.c=.o)
 
-tags:
-	$(CTAGS) -R
-
 static: libf.a
 
 shared: libf.so
@@ -42,7 +50,7 @@ libf.a: $(OBJS)
 clean:
 	$(RM) libf.so
 	$(RM) libf.a
-	find src/ -name '*.o' -delete
+	$(RM) $(OBJS)
 
 install: libf.so libf.a
 	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/
