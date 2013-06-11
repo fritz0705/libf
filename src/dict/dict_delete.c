@@ -25,17 +25,16 @@ bool F_dict_delete(F_dict_t d, uint32_t hash)
 	struct F_dict_bucket *bucket = &d->buckets[BUCKET(d, hash)];
 	uint8_t slot = SLOT(hash);
 
-	if (bucket->smask & (1 << slot))
+	if (!(bucket->smask & (1 << slot)))
 		return false;
 
 	if (bucket->slots[slot].hash == hash)
 	{
 		F_list_node_t node = NULL;
-		F_LIST_FOR_EACH(bucket->burst, e)
-		{
-			if (F_list_value(struct F_dict_entry *, e)->hash == hash)
-				node = e;
-		}
+		if (bucket->burst)
+			F_LIST_FOR_EACH(bucket->burst, e)
+				if (F_list_value(struct F_dict_entry *, e)->hash == hash)
+					node = e;
 
 		if (node)
 		{
@@ -44,7 +43,7 @@ bool F_dict_delete(F_dict_t d, uint32_t hash)
 			F_list_remove(node);
 		}
 		else
-			bucket->smask -= (1 << slot);
+			bucket->smask &= ~(1 << slot);
 
 		return true;
 	}
