@@ -39,6 +39,9 @@ static: libf.a
 
 shared: libf.so
 
+test: test.o libf.a
+	$(LD) $(LDFLAGS) -o $@ $^
+
 libf.so: $(OBJS)
 	$(LD) $(LDFLAGS) -shared -o $@ $^
 
