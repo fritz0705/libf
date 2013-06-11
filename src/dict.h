@@ -22,6 +22,6 @@
 
 #include <f/dict.h>
 
-#define SLOT(h) (((h) * (F_DICT_SLOTS_COUNT - 1)) % F_DICT_SLOTS_COUNT)
+#define SLOT(h) (((h) * (F_DICT_SLOTS_COUNT - 1)) & (F_DICT_SLOTS_COUNT - 1))
 #define BUCKET(d, h) ((h) % (d)->buckets_cnt)
 
