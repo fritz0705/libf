@@ -32,6 +32,7 @@ PREFIX :=/usr/local
 all: static shared
 
 SRCS = $(sort $(wildcard src/*/*.c))
+HEADERS = $(sort $(wildcard include/*/*.h src/*.h))
 OBJS = $(SRCS:.c=.o)
 
 static: libf.a
@@ -44,7 +45,7 @@ libf.so: $(OBJS)
 libf.a: $(OBJS)
 	$(AR) rs $@ $^
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 clean:
