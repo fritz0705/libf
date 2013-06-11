@@ -24,6 +24,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+#ifdef F_DICT_STRUCTS
+#define F_LIST_STRUCTS
+#endif
+
 #include "list.h"
 
 #ifndef F_DICT_H_
@@ -32,6 +36,16 @@
 #ifdef F_DICT_STRUCTS
 #ifndef F_DICT_SLOTS_COUNT
 #define F_DICT_SLOTS_COUNT 8
+#endif
+
+#if F_DICT_SLOTS_COUNT <= 8
+#define SMASK_TYPE uint_fast8_t
+#elif F_DICT_SLOTS_COUNT <= 16
+#define SMASK_TYPE uint_fast16_t
+#elif F_DICT_SLOTS_COUNT <= 32
+#define SMASK_TYPE uint_fast32_t
+#elif F_DICT_SLOTS_COUNT <= 64
+#define SMASK_TYPE uint_fast64_t
 #endif
 
 struct F_dict
@@ -49,9 +63,11 @@ struct F_dict_entry
 struct F_dict_bucket
 {
 	struct F_dict_entry slots[F_DICT_SLOTS_COUNT];
-	uint_fast8_t smask;
+	SMASK_TYPE smask;
 	F_list_t burst;
 };
+
+#undef SMASK_TYPE
 #endif
 
 static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
