@@ -35,6 +35,8 @@ struct test
 
 static int test_dict_1(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(F_DICT_4);
 	for (size_t i = 0; i < 1024; ++i)
 		F_dict_set(d, i * (F_DICT_4 - 1), i);
@@ -46,9 +48,11 @@ static int test_dict_1(char **errmsg)
 
 static int test_dict_2(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(F_DICT_2);
 	for (size_t i = 0; i < 1024; ++i)
-		F_dict_set(d, i * (F_DICT_2 - 1), i);
+		F_dict_set_v(d, &i, sizeof i, i);
 
 	F_dict_destroy(d);
 
@@ -64,8 +68,8 @@ static int test_dict_3(char **errmsg)
 	for (size_t i = 0; i < 1024; ++i)
 		if (F_dict_lookup(d, i * (F_DICT_4 - 1)) == NULL)
 		{
-			asprintf(errmsg, "Lookup at %d(%d) failed: Got %d", i * (F_DICT_4 - 1), i,
-				F_dict_lookup(d, i));
+			asprintf(errmsg, "Lookup at %ld(%ld) failed: Got %lu", i * (F_DICT_4 - 1), i,
+				(uintptr_t)F_dict_lookup(d, i));
 			F_dict_destroy(d);
 			return 1;
 		}
@@ -84,8 +88,8 @@ static int test_dict_4(char **errmsg)
 	for (size_t i = 0; i < 1024; ++i)
 		if (F_dict_lookup(d, i * (F_DICT_2 - 1)) == NULL)
 		{
-			asprintf(errmsg, "Lookup at %d(%d) failed: Got %d", i * (F_DICT_2 - 1), i,
-				F_dict_lookup(d, i));
+			asprintf(errmsg, "Lookup at %ld(%ld) failed: Got %lu", i * (F_DICT_2 - 1), i,
+				(uintptr_t)F_dict_lookup(d, i));
 			F_dict_destroy(d);
 			return 1;
 		}
@@ -97,6 +101,8 @@ static int test_dict_4(char **errmsg)
 
 static int test_dict_5(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(F_DICT_6);
 	for (size_t i = 0; i < 65536; ++i)
 		F_dict_set(d, i * (F_DICT_6 - 1), i);
@@ -108,6 +114,8 @@ static int test_dict_5(char **errmsg)
 
 static int test_dict_6(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(F_DICT_2);
 	for (size_t i = 0; i < 65536; ++i)
 		F_dict_set(d, i * (F_DICT_2 - 1), i);
@@ -126,8 +134,8 @@ static int test_dict_7(char **errmsg)
 	for (size_t i = 0; i < 65536; ++i)
 		if (F_dict_lookup(d, i * (F_DICT_6 - 1)) == NULL)
 		{
-			asprintf(errmsg, "Lookup at %d(%d) failed: Got %d", i * (F_DICT_6 - 1), i,
-				F_dict_lookup(d, i));
+			asprintf(errmsg, "Lookup at %ld(%ld) failed: Got %lu", i * (F_DICT_6 - 1), i,
+				(uintptr_t)F_dict_lookup(d, i));
 			return 1;
 		}
 
@@ -138,6 +146,8 @@ static int test_dict_7(char **errmsg)
 
 static int test_dict_8(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(1024);
 	for (size_t i = 0; i < 1024; ++i)
 		F_dict_set_v(d, &i, sizeof i, i);
@@ -156,7 +166,7 @@ static int test_dict_9(char **errmsg)
 	for (size_t i = 0; i < 1024; ++i)
 		if (!F_dict_lookup_v(d, &i, sizeof i))
 		{
-			asprintf(errmsg, "Lookup for %d failed", i);
+			asprintf(errmsg, "Lookup for %zd failed", i);
 			return 1;
 		}
 
@@ -174,7 +184,7 @@ static int test_dict_10(char **errmsg)
 	for (size_t i = 0; i < 1024; ++i)
 		if (!F_dict_lookup_v(d, &i, sizeof i))
 		{
-			asprintf(errmsg, "Lookup for %d failed", i);
+			asprintf(errmsg, "Lookup for %zd failed", i);
 			return 1;
 		}
 
@@ -185,6 +195,8 @@ static int test_dict_10(char **errmsg)
 
 static int test_dict_11(char **errmsg)
 {
+	(void)errmsg;
+
 	F_dict_t d = F_dict_create(8);
 	for (size_t i = 0; i < 8; ++i)
 		F_dict_set(d, i, i);
@@ -198,6 +210,29 @@ static int test_dict_11(char **errmsg)
 	F_dict_destroy(d);
 	
 	return 1;
+}
+
+static int test_dict_12(char **errmsg)
+{
+	(void)errmsg;
+
+	F_dict_t d = F_dict_create(7);
+	for (size_t i = 0; i < 1024; ++i)
+		F_dict_set_v(d, &i, sizeof i, i);
+
+	F_dict_destroy(d);
+
+	return 0;
+}
+
+static int test_dict_13(char **errmsg)
+{
+	(void)errmsg;
+
+	F_dict_t d = F_dict_create(1);
+	F_dict_set(d, 0, 0);
+	F_dict_destroy(d);
+	return 0;
 }
 
 static void run_test(struct test *t)
@@ -215,8 +250,10 @@ int main(int argc, char **argv)
 	F_dict_t tests = F_dict_create(F_DICT_3);
 	F_list_t ran_tests = F_list_create();
 
+	REGISTER_TEST(tests, "dict: Insert 1 element in dict 1", test_dict_13);
 	REGISTER_TEST(tests, "dict: Insert 1024 elements in dict 4", test_dict_1);
 	REGISTER_TEST(tests, "dict: Insert 1024 elements in dict 2", test_dict_2);
+	REGISTER_TEST(tests, "dict: Insert 1024 elements in dict with 8 buckets", test_dict_12);
 	REGISTER_TEST(tests, "dict: Insert 1024 elements in dict 4 and retrieve each", test_dict_3);
 	REGISTER_TEST(tests, "dict: Insert 1024 elements in dict 2 and retrieve each", test_dict_4);
 	REGISTER_TEST(tests, "dict: Insert 65536 elements in dict 6", test_dict_5);
