@@ -70,7 +70,7 @@ struct F_dict_bucket
 #undef SMASK_TYPE
 #endif
 
-static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
+static inline uint32_t F_dict_fnv32(const unsigned char *data, size_t len)
 {
 	register uint32_t hash = 2166136261U;
 	for (register size_t o = 0; o < len; ++o)
@@ -81,7 +81,7 @@ static inline uint32_t F_dict_fnv32(unsigned char *data, size_t len)
 	return hash;
 }
 
-static inline uint32_t F_dict_fnv32_s(char *str)
+static inline uint32_t F_dict_fnv32_s(const char *str)
 {
 	register uint32_t hash = 2166136261U;
 	while (*str)
@@ -92,7 +92,7 @@ static inline uint32_t F_dict_fnv32_s(char *str)
 	return hash;
 }
 
-static inline uint64_t F_dict_fnv64(unsigned char *data, size_t len)
+static inline uint64_t F_dict_fnv64(const unsigned char *data, size_t len)
 {
 	register uint64_t hash = 14695981039346656037ULL;
 	for (register size_t o = 0; o < len; ++o)
@@ -103,7 +103,7 @@ static inline uint64_t F_dict_fnv64(unsigned char *data, size_t len)
 	return hash;
 }
 
-static inline uint64_t F_dict_fnv64_s(char *str)
+static inline uint64_t F_dict_fnv64_s(const char *str)
 {
 	register uint64_t hash = 14695981039346656037ULL;
 	while (*str)
