@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-F_dict_t F_dict_setup(F_dict_t d, uint_least16_t buckets)
+F_dict_t F_dict_setup(F_dict_t d, uintptr_t buckets)
 {
 	d->buckets_cnt = buckets;
 	d->buckets = malloc(sizeof *d->buckets * buckets);

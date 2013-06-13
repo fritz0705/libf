@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-size_t F_dict_keys(F_dict_t d, uint32_t *dst, size_t dstlen)
+size_t F_dict_keys(F_dict_t d, uintptr_t *dst, size_t dstlen)
 {
 	size_t max = dstlen / sizeof *dst;
 	size_t written = 0;

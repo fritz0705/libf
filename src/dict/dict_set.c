@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-const uintptr_t *F_dict_set(F_dict_t d, uint32_t hash, uintptr_t val)
+const uintptr_t *F_dict_set(F_dict_t d, uintptr_t hash, uintptr_t val)
 {
 	struct F_dict_bucket *bucket = &d->buckets[BUCKET(d, hash)];
 	uint8_t slot = SLOT(hash);

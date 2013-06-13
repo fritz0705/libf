@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-F_dict_t F_dict_create(uint_least16_t buckets)
+F_dict_t F_dict_create(uintptr_t buckets)
 {
 	F_dict_t d = malloc(sizeof *d);
 	if (!d)

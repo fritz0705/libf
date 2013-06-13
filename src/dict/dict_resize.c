@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-F_dict_t F_dict_resize(F_dict_t dict, uint_least16_t buckets)
+F_dict_t F_dict_resize(F_dict_t dict, uintptr_t buckets)
 {
 	/* dict == NULL || dict->buckets_cnt == buckets */
 	if (!dict || dict->buckets_cnt == buckets)
