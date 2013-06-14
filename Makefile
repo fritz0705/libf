@@ -24,6 +24,13 @@ ifeq ($(DEBUG),1)
 override CFLAGS += -O0 -g
 endif
 
+ifeq ($(PROFILE),1)
+override CC := gcc
+override LD := gcc
+override LDFLAGS += -pg
+override CFLAGS += -pg
+endif
+
 DESTDIR :=/
 PREFIX :=/usr/local
 
@@ -54,6 +61,7 @@ libf.a: $(OBJS)
 clean:
 	$(RM) libf.so
 	$(RM) libf.a
+	$(RM) test
 	$(RM) $(OBJS)
 
 install: libf.so libf.a
