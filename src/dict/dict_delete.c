@@ -33,7 +33,7 @@ bool F_dict_delete(F_dict_t d, uintptr_t hash)
 		F_list_node_t node = NULL;
 		if (bucket->burst)
 			F_LIST_FOR_EACH(bucket->burst, e)
-				if (F_list_value(struct F_dict_entry *, e)->hash == hash)
+				if (SLOT(F_list_value(struct F_dict_entry *, e)->hash) == slot)
 					node = e;
 
 		if (node)
