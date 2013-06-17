@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-const uintptr_t *F_dict_lookup(F_dict_t d, uintptr_t hash)
+const uintptr_t *F_dict_lookup(F_dict_t restrict d, uintptr_t hash)
 {
 	struct F_dict_bucket *bucket = &d->buckets[BUCKET(d, hash)];
 	uint8_t slot = SLOT(hash);

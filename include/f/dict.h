@@ -70,7 +70,7 @@ struct F_dict_bucket
 #undef SMASK_TYPE
 #endif
 
-static inline uint32_t F_dict_fnv32(const unsigned char *data, size_t len)
+static inline uint32_t F_dict_fnv32(const unsigned char *restrict data, size_t len)
 {
 	register uint32_t hash = 2166136261U;
 	for (register size_t o = 0; o < len; ++o)
@@ -81,7 +81,7 @@ static inline uint32_t F_dict_fnv32(const unsigned char *data, size_t len)
 	return hash;
 }
 
-static inline uint32_t F_dict_fnv32_s(const char *str)
+static inline uint32_t F_dict_fnv32_s(const char *restrict str)
 {
 	register uint32_t hash = 2166136261U;
 	while (*str)
@@ -92,7 +92,7 @@ static inline uint32_t F_dict_fnv32_s(const char *str)
 	return hash;
 }
 
-static inline uint64_t F_dict_fnv64(const unsigned char *data, size_t len)
+static inline uint64_t F_dict_fnv64(const unsigned char *restrict data, size_t len)
 {
 	register uint64_t hash = 14695981039346656037ULL;
 	for (register size_t o = 0; o < len; ++o)
@@ -103,7 +103,7 @@ static inline uint64_t F_dict_fnv64(const unsigned char *data, size_t len)
 	return hash;
 }
 
-static inline uint64_t F_dict_fnv64_s(const char *str)
+static inline uint64_t F_dict_fnv64_s(const char *restrict str)
 {
 	register uint64_t hash = 14695981039346656037ULL;
 	while (*str)
@@ -141,21 +141,21 @@ typedef struct F_dict_entry *F_dict_entry_t;
 
 F_dict_t F_dict_create(uintptr_t buckets);
 
-F_dict_t F_dict_setup(F_dict_t d, uintptr_t buckets);
-F_dict_t F_dict_resize(F_dict_t d, uintptr_t buckets);
+F_dict_t F_dict_setup(F_dict_t restrict d, uintptr_t buckets);
+F_dict_t F_dict_resize(F_dict_t restrict d, uintptr_t buckets);
 
-void F_dict_destroy(F_dict_t d);
+void F_dict_destroy(F_dict_t restrict d);
 
-const uintptr_t *F_dict_lookup(F_dict_t d, uintptr_t hash);
-const uintptr_t *F_dict_set(F_dict_t d, uintptr_t hash, uintptr_t val);
+const uintptr_t *F_dict_lookup(F_dict_t restrict d, uintptr_t hash);
+const uintptr_t *F_dict_set(F_dict_t restrict d, uintptr_t hash, uintptr_t val);
 
-size_t F_dict_keys(F_dict_t d, uintptr_t *dst, size_t dstlen);
-size_t F_dict_values(F_dict_t d, uintptr_t *dst, size_t dstlen);
-size_t F_dict_entries(F_dict_t d, F_dict_entry_t *dst, size_t dstlen);
+size_t F_dict_keys(F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
+size_t F_dict_values(F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
+size_t F_dict_entries(F_dict_t restrict d, F_dict_entry_t *restrict dst, size_t dstlen);
 
-size_t F_dict_length(F_dict_t d);
+size_t F_dict_length(F_dict_t restrict d);
 
-bool F_dict_delete(F_dict_t d, uintptr_t hash);
+bool F_dict_delete(F_dict_t restrict d, uintptr_t hash);
 
 #define F_dict_set_v(d, o, s, v) \
 	(F_dict_set(d, (uintptr_t)F_DICT_FNV((unsigned char *)(o), s), v))

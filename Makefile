@@ -63,6 +63,7 @@ clean:
 	$(RM) libf.a
 	$(RM) test
 	$(RM) $(OBJS)
+	$(RM) test.o
 
 install: libf.so libf.a
 	install libf.a libf.so $(DESTDIR)$(PREFIX)/lib/

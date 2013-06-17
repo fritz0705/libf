@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-void F_dict_destroy(F_dict_t d)
+void F_dict_destroy(F_dict_t restrict d)
 {
 	for (size_t o = 0; o < d->buckets_cnt; ++o)
 	{
