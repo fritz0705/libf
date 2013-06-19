@@ -41,6 +41,8 @@ const uintptr_t *F_dict_lookup(F_dict_t restrict d, uintptr_t hash)
 			F_dict_entry_t e = F_list_value(F_dict_entry_t, node);
 			if (e->hash == hash)
 				entry = e;
+			else if (e->hash > hash)
+				break;
 		}
 	}
 

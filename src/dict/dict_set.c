@@ -47,24 +47,37 @@ const uintptr_t *F_dict_set(F_dict_t restrict d, uintptr_t hash, uintptr_t val)
 		bucket->burst = F_list_create();
 	if (!bucket->burst)
 		return NULL;
-	F_LIST_FOR_EACH(bucket->burst, e)
+
+	F_LIST_FOR_EACH(bucket->burst, node)
 	{
-		if (F_list_value(struct F_dict_entry *, e)->hash == hash)
-			entry = F_list_value(struct F_dict_entry *, e);
+		struct F_dict_entry *e = F_list_value(struct F_dict_entry *, node);
+		if (e->hash == hash)
+		{
+			entry = e;
+			entry->data = val;
+			break;
+		}
+		else if (e->hash > hash)
+		{
+			entry = malloc(sizeof *entry);
+			*entry = (struct F_dict_entry){
+				.hash = hash,
+				.data = val
+			};
+			F_list_insert_before(node, (uintptr_t)entry);
+			break;
+		}
 	}
 
-	if (entry)
+	if (!entry)
 	{
-		entry->data = val;
-		return &entry->data;
+		entry = malloc(sizeof *entry);
+		*entry = (struct F_dict_entry){
+			.hash = hash,
+			.data = val
+		};
+		F_list_append(bucket->burst, (uintptr_t)entry);
 	}
 
-	entry = malloc(sizeof *entry);
-	*entry = (struct F_dict_entry){
-		.hash = hash,
-		.data = val
-	};
-
-	F_list_append(bucket->burst, (uintptr_t)entry);
 	return &entry->data;
 }
