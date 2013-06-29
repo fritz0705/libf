@@ -122,17 +122,89 @@ static inline uint64_t F_dict_fnv64_s(const char *restrict str)
 	return hash;
 }
 
+static inline uint32_t F_dict_jenkins32(const unsigned char *restrict data, size_t len)
+	__attribute__((always_inline));
+static inline uint32_t F_dict_jenkins32(const unsigned char *restrict data, size_t len)
+{
+	register uint32_t hash = 0;
+	for (register size_t o = 0; o < len; ++o)
+	{
+		hash += data[o];
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+
+	return hash;
+}
+
+static inline uint32_t F_dict_jenkins32_s(const char *restrict str)
+	__attribute__((always_inline));
+static inline uint32_t F_dict_jenkins32_s(const char *restrict str)
+{
+	register uint32_t hash = 0;
+	while (*str)
+	{
+		hash += *str++;
+		hash += (hash << 10);
+		hash ^= (hash >> 6);
+	}
+
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+
+	return hash;
+}
+
+static inline uint64_t F_dict_djb64(const unsigned char *restrict data, size_t len)
+	__attribute__((always_inline));
+static inline uint64_t F_dict_djb64(const unsigned char *restrict data, size_t len)
+{
+	register uint64_t hash = 5381;
+	for (register size_t o = 0; o < len; ++o)
+		hash = ((hash << 5) + hash) + data[o];
+
+	return hash;
+}
+
+static inline uint64_t F_dict_djb64_s(const char *restrict str)
+	__attribute__((always_inline));
+static inline uint64_t F_dict_djb64_s(const char *restrict str)
+{
+	register uint64_t hash = 5381;
+	while (*str)
+		hash = ((hash << 5) + hash) + *str++;
+
+	return hash;
+}
+
 #ifdef __SIZEOF_POINTER__
 #if __SIZEOF_POINTER__ <= 4
+#ifndef F_DICT_FNV
 #define F_DICT_FNV F_dict_fnv32
+#endif
+#ifndef F_DICT_FNV_S
 #define F_DICT_FNV_S F_dict_fnv32_s
+#endif
 #elif __SIZEOF_POINTER__ <= 8
+#ifndef F_DICT_FNV
 #define F_DICT_FNV F_dict_fnv64
+#endif
+#ifndef F_DICT_FNV_S
 #define F_DICT_FNV_S F_dict_fnv64_s
 #endif
+#endif
 #else
+#ifndef F_DICT_FNV
 #define F_DICT_FNV F_dict_fnv32
+#endif
+#ifndef F_DICT_FNV_S
 #define F_DICT_FNV_S F_dict_fnv32_s
+#endif
 #endif
 
 typedef struct F_dict *F_dict_t;
