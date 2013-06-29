@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-size_t F_dict_length(F_dict_t restrict d)
+size_t F_dict_length(const F_dict_t restrict d)
 {
 	size_t len = 0;
 

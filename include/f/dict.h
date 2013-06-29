@@ -71,6 +71,8 @@ struct F_dict_bucket
 #endif
 
 static inline uint32_t F_dict_fnv32(const unsigned char *restrict data, size_t len)
+	__attribute__((always_inline));
+static inline uint32_t F_dict_fnv32(const unsigned char *restrict data, size_t len)
 {
 	register uint32_t hash = 2166136261U;
 	for (register size_t o = 0; o < len; ++o)
@@ -81,6 +83,8 @@ static inline uint32_t F_dict_fnv32(const unsigned char *restrict data, size_t l
 	return hash;
 }
 
+static inline uint32_t F_dict_fnv32_s(const char *restrict str)
+	__attribute__((always_inline));
 static inline uint32_t F_dict_fnv32_s(const char *restrict str)
 {
 	register uint32_t hash = 2166136261U;
@@ -93,6 +97,8 @@ static inline uint32_t F_dict_fnv32_s(const char *restrict str)
 }
 
 static inline uint64_t F_dict_fnv64(const unsigned char *restrict data, size_t len)
+	__attribute__((always_inline));
+static inline uint64_t F_dict_fnv64(const unsigned char *restrict data, size_t len)
 {
 	register uint64_t hash = 14695981039346656037ULL;
 	for (register size_t o = 0; o < len; ++o)
@@ -103,6 +109,8 @@ static inline uint64_t F_dict_fnv64(const unsigned char *restrict data, size_t l
 	return hash;
 }
 
+static inline uint64_t F_dict_fnv64_s(const char *restrict str)
+	__attribute__((always_inline));
 static inline uint64_t F_dict_fnv64_s(const char *restrict str)
 {
 	register uint64_t hash = 14695981039346656037ULL;
@@ -123,8 +131,8 @@ static inline uint64_t F_dict_fnv64_s(const char *restrict str)
 #define F_DICT_FNV_S F_dict_fnv64_s
 #endif
 #else
-#define F_DICT_FNV F_dict_fnv64
-#define F_DICT_FNV_S F_dict_fnv64_s
+#define F_DICT_FNV F_dict_fnv32
+#define F_DICT_FNV_S F_dict_fnv32_s
 #endif
 
 typedef struct F_dict *F_dict_t;
@@ -139,6 +147,8 @@ typedef struct F_dict_entry *F_dict_entry_t;
 #define F_DICT_7 32749
 #define F_DICT_8 65521
 
+#define F_BUCKETS(n) (((n) + 1) + ((n) & 1))
+
 F_dict_t F_dict_create(uintptr_t buckets);
 
 F_dict_t F_dict_setup(F_dict_t restrict d, uintptr_t buckets);
@@ -146,16 +156,18 @@ F_dict_t F_dict_resize(F_dict_t restrict d, uintptr_t buckets);
 
 void F_dict_destroy(F_dict_t restrict d);
 
-const uintptr_t *F_dict_lookup(F_dict_t restrict d, uintptr_t hash);
-const uintptr_t *F_dict_set(F_dict_t restrict d, uintptr_t hash, uintptr_t val);
+const uintptr_t *F_dict_lookup(const F_dict_t restrict d, uintptr_t hash);
+const uintptr_t *F_dict_set(const F_dict_t restrict d, uintptr_t hash, uintptr_t val);
 
-size_t F_dict_keys(F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
-size_t F_dict_values(F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
-size_t F_dict_entries(F_dict_t restrict d, F_dict_entry_t *restrict dst, size_t dstlen);
+size_t F_dict_keys(const F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
+size_t F_dict_values(const F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen);
+size_t F_dict_entries(const F_dict_t restrict d, F_dict_entry_t *restrict dst, size_t dstlen);
 
-size_t F_dict_length(F_dict_t restrict d);
+size_t F_dict_length(const F_dict_t restrict d);
 
-bool F_dict_delete(F_dict_t restrict d, uintptr_t hash);
+bool F_dict_delete(const F_dict_t restrict d, uintptr_t hash);
+
+double F_dict_loadfactor(const F_dict_t restrict d);
 
 #define F_dict_set_v(d, o, s, v) \
 	(F_dict_set(d, (uintptr_t)F_DICT_FNV((unsigned char *)(o), s), v))

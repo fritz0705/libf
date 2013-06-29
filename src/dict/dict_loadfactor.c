@@ -20,34 +20,13 @@
 
 #include "../dict.h"
 
-const uintptr_t *F_dict_lookup(const F_dict_t restrict d, uintptr_t hash)
+double F_dict_loadfactor(const F_dict_t restrict d)
 {
-	struct F_dict_bucket *bucket = &d->buckets[BUCKET(d, hash)];
-	uint8_t slot = SLOT(hash);
+	uintmax_t load = 0;
+	for (size_t b = 0; b < d->buckets_cnt; ++b)
+		for (size_t slot = 0; slot < F_DICT_SLOTS_COUNT; ++slot)
+			if (d->buckets[b].smask & (slot << 1))
+				++load;
 
-	struct F_dict_entry *entry = NULL;
-	if (bucket->smask & (1 << slot))
-		entry = &bucket->slots[slot];
-	else
-		return NULL;
-
-	if (entry->hash != hash)
-	{
-		if (!bucket->burst)
-			return NULL;
-		entry = NULL;
-		F_LIST_FOR_EACH(bucket->burst, node)
-		{
-			F_dict_entry_t e = F_list_value(F_dict_entry_t, node);
-			if (e->hash == hash)
-				entry = e;
-			else if (e->hash > hash)
-				break;
-		}
-	}
-
-	if (entry == NULL)
-		return NULL;
-
-	return &entry->data;
+	return load / (d->buckets_cnt);
 }

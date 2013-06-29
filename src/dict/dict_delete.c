@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-bool F_dict_delete(F_dict_t restrict d, uintptr_t hash)
+bool F_dict_delete(const F_dict_t restrict d, uintptr_t hash)
 {
 	struct F_dict_bucket *bucket = &d->buckets[BUCKET(d, hash)];
 	uint8_t slot = SLOT(hash);

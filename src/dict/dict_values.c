@@ -20,7 +20,7 @@
 
 #include "../dict.h"
 
-size_t F_dict_values(F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen)
+size_t F_dict_values(const F_dict_t restrict d, uintptr_t *restrict dst, size_t dstlen)
 {
 	size_t max = dstlen / sizeof *dst;
 	size_t written = 0;
